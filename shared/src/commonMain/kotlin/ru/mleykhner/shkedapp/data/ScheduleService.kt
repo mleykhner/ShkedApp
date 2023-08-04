@@ -7,7 +7,7 @@ import io.ktor.http.appendPathSegments
 import ru.mleykhner.shkedapp.data.remote.HttpRoutes
 import ru.mleykhner.shkedapp.data.remote.httpClient
 
-class ScheduleManager(
+class ScheduleService(
     val client: HttpClient = httpClient()
 ) {
 

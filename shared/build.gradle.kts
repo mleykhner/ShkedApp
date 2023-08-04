@@ -38,7 +38,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("io.insert-koin:koin-core:$koinVersion")
-                implementation("io.realm.kotlin:library-base:$realmVersion") // Add to only use the local database
+                implementation("io.realm.kotlin:library-base:$realmVersion")
 
             }
         }

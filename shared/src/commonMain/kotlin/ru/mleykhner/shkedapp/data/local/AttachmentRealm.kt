@@ -7,12 +7,12 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 
 class AttachmentRealm: RealmObject {
     @PrimaryKey
-    val id: String = RealmUUID.random().toString()
+    var id: String = RealmUUID.random().toString()
     @Index
-    val fileName: String = ""
-    val extension: String = ""
-    val previewURL: String = ""
-    val fileURL: String = ""
-    val filePath: String? = null
-    val sizeBytes: Long = 0
+    var fileName: String = ""
+    var extension: String = ""
+    var previewURL: String = ""
+    var fileURL: String = ""
+    var filePath: String? = null
+    var sizeBytes: Long = 0
 }
