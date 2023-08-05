@@ -7,7 +7,8 @@ import io.ktor.client.request.get
 import ru.mleykhner.shkedapp.data.models.AttachmentViewData
 import org.koin.mp.KoinPlatform.getKoin
 
-class FileNetworkService(private val client: HttpClient = httpClient()) {
+class FileNetworkService() {
+    private val client: HttpClient = getKoin().get()
     private val fileStorage: FileStorage = getKoin().get()
     suspend fun downloadFile(attachmentViewData: AttachmentViewData, progress: (Float) -> Unit = {}): String {
         val response = client.get(attachmentViewData.fileURL) {
