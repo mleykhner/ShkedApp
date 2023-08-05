@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <!--  Данные  -->
+    <string name="b">Байт</string>
+    <string name="kb">КБ</string>
+    <string name="mb">МБ</string>
+
+    <!--  Экраны  -->
+    <string name="news">Новости</string>
+    <string name="schedule">Расписание</string>
+    <string name="tasks">Задания</string>
+
+    <!--  Люди  -->
+    <string name="lecturer">Преподаватель</string>
+
+    <!--  Пары   -->
+    <string name="lecture">ЛК</string>
+    <string name="practical">ПЗ</string>
+    <string name="laboratory">ЛР</string>
+    <string name="test">ЗЧ</string>
+    <string name="exam">Экз</string>
+    <string name="now">Сейчас</string>
+
+    <!--  Задания  -->
+    <string name="no_task">Задания нет</string>
+    <string name="add_task">Добавить задание</string>
+    <string name="add">Добавить</string>
+    <string name="show">Показать</string>
+    <string name="hide">Скрыть</string>
+    <string name="share">Поделиться</string>
+    <string name="share_with_classmates">Открыть для всех</string>
+    <string name="edit">Изменить</string>
+    <string name="delete">Удалить</string>
+</resources>

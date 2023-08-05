@@ -3,6 +3,7 @@ plugins {
     kotlin("plugin.serialization") version "1.8.21"
     id("com.android.library")
     id("io.realm.kotlin") version "1.10.0"
+    id("dev.icerock.mobile.multiplatform-resources")
 }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
@@ -24,6 +25,8 @@ kotlin {
     ).forEach {
         it.binaries.framework {
             baseName = "shared"
+            export("dev.icerock.moko:resources:0.23.0")
+            export("dev.icerock.moko:graphics:0.9.0")
         }
     }
 
@@ -39,7 +42,7 @@ kotlin {
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("io.insert-koin:koin-core:$koinVersion")
                 implementation("io.realm.kotlin:library-base:$realmVersion")
-
+                api("dev.icerock.moko:resources:0.23.0")
             }
         }
 
@@ -70,4 +73,9 @@ android {
     defaultConfig {
         minSdk = 26
     }
+}
+
+multiplatformResources {
+    multiplatformResourcesPackage = "ru.mleykhner.shared_resources"
+    multiplatformResourcesClassName = "SharedRes"
 }

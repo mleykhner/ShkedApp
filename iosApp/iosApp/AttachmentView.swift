@@ -96,10 +96,12 @@ func bytesShortenToString(_ bytes: Int64) -> String {
         remains = remains / 1024
         order += 1
     }
+    let number = String(format: "%.2f", remains)
+    
     switch order {
-    case 0: return "\(String(format: "%.2f", remains)) B"
-    case 1: return "\(String(format: "%.2f", remains)) KB"
-    default: return "\(String(format: "%.2f", remains)) MB"
+    case 0: return number + " " + Strings().get(id: SharedRes.strings().b, args: [])
+    case 1: return number + " " + Strings().get(id: SharedRes.strings().kb, args: [])
+    default: return number + " " + Strings().get(id: SharedRes.strings().mb, args: [])
     }
 }
 
