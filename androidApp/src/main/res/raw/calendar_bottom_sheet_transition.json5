@@ -1,0 +1,15 @@
+{
+  ConstraintSets: {
+    start: {
+      serviceBox: {
+        height: 184,
+      },
+
+    },
+    end: {
+      serviceBox: {
+        height: 160,
+      },
+    }
+  }
+}

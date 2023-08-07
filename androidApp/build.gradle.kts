@@ -5,11 +5,11 @@ plugins {
 
 android {
     namespace = "ru.mleykhner.shkedapp.android"
-    compileSdk = 33
+    compileSdk = 34
     defaultConfig {
         applicationId = "ru.mleykhner.shkedapp.android"
         minSdk = 26
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
     }
@@ -39,6 +39,7 @@ android {
 }
 
 val koinVersion = "3.4.3"
+val navVersion = "2.6.0"
 
 dependencies {
     implementation(project(":shared"))
@@ -46,7 +47,10 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling:1.4.3")
     implementation("androidx.compose.ui:ui-tooling-preview:1.4.3")
     implementation("androidx.compose.foundation:foundation:1.4.3")
-    implementation("androidx.compose.material:material:1.4.3")
+    implementation("androidx.compose.material3:material3:1.1.1")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation("io.insert-koin:koin-android:$koinVersion")
+    implementation("androidx.navigation:navigation-compose:$navVersion")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha11")
+
 }

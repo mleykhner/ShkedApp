@@ -1,0 +1,43 @@
+{
+  ConstraintSets: {
+    start: {
+      monthLabel: {
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+        start: ['parent', 'start']
+      },
+      previousButton: {
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+        start: ['parent', 'start'],
+        visibility: 'gone',
+      },
+      nextButton: {
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+        end: ['parent', 'end'],
+        visibility: 'gone',
+      }
+    },
+    end: {
+      monthLabel: {
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+        start: ['parent', 'start'],
+        end: ['parent', 'end']
+      },
+      previousButton: {
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+        start: ['parent', 'start'],
+        visibility: 'visible',
+      },
+      nextButton: {
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+        end: ['parent', 'end'],
+        visibility: 'visible',
+      }
+    }
+  }
+}
