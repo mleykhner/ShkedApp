@@ -2,6 +2,7 @@ package ru.mleykhner.shkedapp.android.ui.elements
 
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -78,7 +79,13 @@ fun Calendar() {
         sheetShadowElevation = 6.dp,
         sheetPeekHeight = 172.dp,
         containerColor = MaterialTheme.colorScheme.background,
-        sheetContent = { CalendarControls(bottomSheetState.bottomSheetState.targetValue) }
+        sheetContent = {
+            CalendarControls(
+                bottomSheetState
+                    .bottomSheetState
+                    .targetValue
+            )
+        }
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -114,7 +121,7 @@ fun CalendarControls(state: SheetValue) {
     val weekdaysNames = remember {
         getShortWeekdaysSymbols()
     }
-    val monthLabel = getMonthLabel(selectedDate)
+    var monthLabel by remember { mutableStateOf(getMonthLabel(selectedDate)) }
     val progress by animateFloatAsState(if (state == SheetValue.Expanded) 1f else 0f, label = "")
     val weekPagerState = rememberPagerState(
         pageCount = { 3 },
@@ -128,6 +135,10 @@ fun CalendarControls(state: SheetValue) {
                 weekPagerState.scrollToPage(1)
             }
         }
+    }
+
+    LaunchedEffect(selectedDate) {
+        monthLabel = getMonthLabel(selectedDate)
     }
 
     Column(
@@ -146,15 +157,17 @@ fun CalendarControls(state: SheetValue) {
                 targetState = monthLabel,
                 label = "monthChange",
                 transitionSpec = {
-                    fadeIn(animationSpec = tween(100, 0))togetherWith fadeOut()
+                    fadeIn(animationSpec = tween(100, 0)) togetherWith fadeOut()
                 },
                 modifier = Modifier
                     .layoutId("monthLabel")
+                    .animateContentSize()
             ) {
                 Text(
                     text = it,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.animateContentSize()
                 )
             }
             FilledTonalIconButton(
