@@ -112,13 +112,12 @@ fun AppTheme(
   }
 
     val typography = Typography(
-        bodyMedium = TextStyle(
-            fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Normal,
-            fontSize = 16.sp
-        ),
-        labelMedium = lableMediumStyle,
-        titleMedium = titleMediumStyle
+        bodyLarge = bodyLargeStyle,
+        bodyMedium = bodyMediumStyle,
+        labelMedium = labelMediumStyle,
+        labelSmall = labelSmallStyle,
+        titleMedium = titleMediumStyle,
+        titleSmall = titleSmallStyle
     )
 
   MaterialTheme(
