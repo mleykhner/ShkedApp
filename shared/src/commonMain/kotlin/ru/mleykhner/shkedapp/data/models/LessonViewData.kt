@@ -1,10 +1,8 @@
-package ru.mleykhner.shkedapp.data.remote.models
+package ru.mleykhner.shkedapp.data.models
 
-import kotlinx.serialization.Serializable
 import ru.mleykhner.shkedapp.data.LessonType
 
-@Serializable
-data class LessonDTO(
+data class LessonViewData(
     val name: String,
     val lecturer: String?,
     val ordinal: Int,

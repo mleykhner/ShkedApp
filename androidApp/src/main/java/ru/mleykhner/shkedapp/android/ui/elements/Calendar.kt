@@ -1,6 +1,7 @@
 package ru.mleykhner.shkedapp.android.ui.elements
 
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
@@ -19,6 +20,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -40,22 +43,24 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import ru.mleykhner.shkedapp.android.ui.theme.AppTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
 import ru.mleykhner.shkedapp.android.R
+import ru.mleykhner.shkedapp.android.ui.theme.AppTheme
 import ru.mleykhner.shkedapp.android.ui.theme.weekdaysStyle
 import java.text.DateFormatSymbols
 import java.time.LocalDate
+import java.time.Period
 import java.time.format.TextStyle
 import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
@@ -102,7 +107,7 @@ fun Calendar() {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CalendarControls(state: SheetValue) {
-    var selectedDate by remember {
+    var selectedDate by rememberSaveable {
         mutableStateOf(LocalDate.now())
     }
     val context = LocalContext.current
@@ -123,19 +128,7 @@ fun CalendarControls(state: SheetValue) {
     }
     var monthLabel by remember { mutableStateOf(getMonthLabel(selectedDate)) }
     val progress by animateFloatAsState(if (state == SheetValue.Expanded) 1f else 0f, label = "")
-    val weekPagerState = rememberPagerState(
-        pageCount = { 3 },
-        initialPage = 1
-    )
 
-    LaunchedEffect(weekPagerState) {
-        snapshotFlow { weekPagerState.settledPage }.collect { page ->
-            if (page != 1) {
-                selectedDate = selectedDate.plusWeeks((page - 1).toLong())
-                weekPagerState.scrollToPage(1)
-            }
-        }
-    }
 
     LaunchedEffect(selectedDate) {
         monthLabel = getMonthLabel(selectedDate)
@@ -185,44 +178,9 @@ fun CalendarControls(state: SheetValue) {
                 Icon(Icons.Rounded.ArrowBack, contentDescription = null)
             }
         }
-        HorizontalPager(state = weekPagerState) { page ->
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                getWeek(selectedDate.plusWeeks((page - 1).toLong())).forEach { date ->
-                    IconButton(onClick = {selectedDate = date}) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .width(46.dp)
-                                .height(46.dp)
-                        ) {
-                            Text(
-                                text = date.dayOfMonth.toString(),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            androidx.compose.animation.AnimatedVisibility(
-                                visible = (date.isEqual(selectedDate)),
-                                enter = fadeIn(),
-                                exit = fadeOut()
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .border(
-                                            width = 2.dp,
-                                            brush = SolidColor(MaterialTheme.colorScheme.onSurface),
-                                            shape = CircleShape
-                                        )
-                                        .fillMaxSize()
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+        WeekObserver(selectedDate) {
+            Log.i("WeekObserver", "Date changed: $it")
+            selectedDate = it
         }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -243,8 +201,128 @@ fun CalendarControls(state: SheetValue) {
                 }
             }
         }
-        MotionLayout(motionScene = MotionScene(content = sheetMotionScene), progress = progress) {
-            Box(modifier = Modifier.layoutId("serviceBox"))
+//        MotionLayout(motionScene = MotionScene(content = sheetMotionScene), progress = progress) {
+//            Box(modifier = Modifier.layoutId("serviceBox"))
+//        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun WeekObserver(selectedDate: LocalDate, onDateChange: (LocalDate) -> Unit = {}) {
+    val weekPagerState = rememberPagerState(
+        pageCount = { 3 },
+        initialPage = 1
+    )
+
+    var weeks = remember {
+        (-1..1).map { getWeek(selectedDate.plusWeeks(it.toLong())) }
+    }
+
+    LaunchedEffect(weekPagerState) {
+        snapshotFlow { weekPagerState.settledPage }.collect { page ->
+            if (page != 1) {
+                Log.i("WeekObserver", "Pager state changed: $page")
+                onDateChange(selectedDate.plusWeeks((page - 1).toLong()))
+                weeks = (-1..1).map { getWeek(selectedDate.plusWeeks(it.toLong())) }
+                weekPagerState.scrollToPage(1)
+            }
+        }
+    }
+
+    HorizontalPager(weekPagerState) { page ->
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            weeks[page].forEach { date ->
+                IconButton(onClick = {onDateChange(date)}) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .width(46.dp)
+                            .height(46.dp)
+                    ) {
+                        Text(
+                            text = date.dayOfMonth.toString(),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = (date.isEqual(selectedDate)),
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .border(
+                                        width = 2.dp,
+                                        brush = SolidColor(MaterialTheme.colorScheme.onSurface),
+                                        shape = CircleShape
+                                    )
+                                    .fillMaxSize()
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun WeekObserver_Preview() {
+    var selectedDate by remember {
+        mutableStateOf(LocalDate.now())
+    }
+    AppTheme {
+        WeekObserver(selectedDate) {selectedDate = it}
+    }
+}
+
+@Composable
+fun MonthObserver(selectedDate: LocalDate) {
+    LazyVerticalGrid(GridCells.Fixed(7)) {
+        val dates = getMonth(selectedDate)
+        items(dates.size) { dateIndex ->
+            if (dates[dateIndex] != null) {
+                IconButton(onClick = { }) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .width(46.dp)
+                            .height(46.dp)
+                    ) {
+                        Text(
+                            text = dates[dateIndex]!!.dayOfMonth.toString(),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        androidx.compose.animation.AnimatedVisibility(
+                            visible = (dates[dateIndex]!!.isEqual(selectedDate)),
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .border(
+                                        width = 2.dp,
+                                        brush = SolidColor(MaterialTheme.colorScheme.onSurface),
+                                        shape = CircleShape
+                                    )
+                                    .fillMaxSize()
+                            )
+                        }
+                    }
+                }
+            } else {
+                Box(modifier = Modifier
+                    .height(46.dp)
+                    .width(46.dp))
+            }
+
         }
     }
 }
@@ -267,6 +345,18 @@ fun getWeek(date: LocalDate): List<LocalDate> {
     return (0..6).map { dayIndex ->
         weekStart.plusDays(dayIndex.toLong())
     }
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+fun getMonth(date: LocalDate): List<LocalDate?> {
+    val isLeapYear = date.isLeapYear
+    val weekFields = WeekFields.of(Locale.getDefault())
+    val firstDayOfWeek = weekFields.firstDayOfWeek
+    val weekStart = date.with(TemporalAdjusters.previousOrSame(firstDayOfWeek))
+    val firstDay = LocalDate.of(date.year, date.month, 1)
+    val prevMonthOffset = Period.between(weekStart, firstDay).days
+    val daysInMonth = date.month.length(isLeapYear)
+    return (0..< prevMonthOffset).map { null } + (0 ..< daysInMonth).map { firstDay.plusDays(it.toLong()) }
 }
 
 fun getShortWeekdaysSymbols(): List<String> {

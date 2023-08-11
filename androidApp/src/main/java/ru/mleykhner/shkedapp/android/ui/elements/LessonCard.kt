@@ -6,7 +6,6 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,10 +45,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.mleykhner.shared_resources.SharedRes
 import ru.mleykhner.shkedapp.android.ui.theme.AppTheme
+import ru.mleykhner.shkedapp.data.LessonType
+import ru.mleykhner.shkedapp.data.models.LessonViewData
 import ru.mleykhner.shkedapp.utils.Strings
+import ru.mleykhner.shkedapp.utils.toLocalizedString
 
 @Composable
-fun LessonCard(modifier: Modifier = Modifier) {
+fun LessonCard(lesson: LessonViewData, modifier: Modifier = Modifier) {
 
     var expanded by remember {
         mutableStateOf(true)
@@ -86,7 +88,7 @@ fun LessonCard(modifier: Modifier = Modifier) {
                             .width(42.dp)
                     ) {
                         Text(
-                            text = "1",
+                            text = lesson.ordinal.toString(),
                             style = MaterialTheme
                                 .typography
                                 .titleMedium
@@ -116,7 +118,7 @@ fun LessonCard(modifier: Modifier = Modifier) {
                     )
                     Spacer(Modifier.height(2.dp))
                     Text(
-                        text = "Математический анализ",
+                        text = lesson.name,
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -141,7 +143,7 @@ fun LessonCard(modifier: Modifier = Modifier) {
                                     )
                             ) {
                                 Text(
-                                    text = "ЛК",
+                                    text = lesson.type.toLocalizedString(LocalContext.current),
                                     style = MaterialTheme
                                         .typography
                                         .bodyMedium
@@ -155,7 +157,7 @@ fun LessonCard(modifier: Modifier = Modifier) {
                                 )
                             }
                             Text(
-                                text = "ГУК Б-261",
+                                text = lesson.location,
                                 style = MaterialTheme
                                     .typography
                                     .bodyMedium
@@ -225,12 +227,15 @@ fun LessonCard(modifier: Modifier = Modifier) {
                                 color = MaterialTheme.colorScheme.secondary
                             )
                             Text(
-                                text = "Вестяк Владимир Анатольевич",
+                                text = lesson.lecturer ?: "–",
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                         }
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(
+                            onClick = { /*TODO*/ },
+                            enabled = !lesson.lecturer.isNullOrEmpty()
+                        ) {
                             Icon(Icons.Rounded.Info, null)
                         }
                     }
@@ -252,7 +257,15 @@ fun LessonCard(modifier: Modifier = Modifier) {
 )
 @Composable
 fun LessonCard_Preview() {
+    val lesson = LessonViewData(
+        name = "Основы схемотехники",
+        lecturer = null,
+        ordinal = 2,
+        type = LessonType.PRACTICAL,
+        location = "3-425"
+    )
+
     AppTheme {
-        LessonCard(Modifier.padding(12.dp))
+        LessonCard(lesson, Modifier.padding(12.dp))
     }
 }
