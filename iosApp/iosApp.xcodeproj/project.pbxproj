@@ -11,6 +11,8 @@
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* AttachmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* AttachmentView.swift */; };
+		AD1D55122A8650A2006687CF /* LessonCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D55112A8650A2006687CF /* LessonCard.swift */; };
+		AD1D55142A866F9D006687CF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D55132A866F9D006687CF /* Theme.swift */; };
 		ADD87A1F2A7D734600AF8D09 /* CustomProgressViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD87A1E2A7D734600AF8D09 /* CustomProgressViewStyle.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +36,8 @@
 		7555FF7B242A565900829871 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* AttachmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AD1D55112A8650A2006687CF /* LessonCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonCard.swift; sourceTree = "<group>"; };
+		AD1D55132A866F9D006687CF /* Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		ADD87A1E2A7D734600AF8D09 /* CustomProgressViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomProgressViewStyle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -76,6 +80,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				AD1D550F2A86507A006687CF /* ui */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF82242A565900829871 /* AttachmentView.swift */,
 				7555FF8C242A565B00829871 /* Info.plist */,
@@ -91,6 +96,23 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AD1D550F2A86507A006687CF /* ui */ = {
+			isa = PBXGroup;
+			children = (
+				AD1D55132A866F9D006687CF /* Theme.swift */,
+				AD1D55102A865085006687CF /* elements */,
+			);
+			path = ui;
+			sourceTree = "<group>";
+		};
+		AD1D55102A865085006687CF /* elements */ = {
+			isa = PBXGroup;
+			children = (
+				AD1D55112A8650A2006687CF /* LessonCard.swift */,
+			);
+			path = elements;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -186,6 +208,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				ADD87A1F2A7D734600AF8D09 /* CustomProgressViewStyle.swift in Sources */,
+				AD1D55122A8650A2006687CF /* LessonCard.swift in Sources */,
+				AD1D55142A866F9D006687CF /* Theme.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				7555FF83242A565900829871 /* AttachmentView.swift in Sources */,
 			);
@@ -323,6 +347,7 @@
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -356,6 +381,7 @@
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

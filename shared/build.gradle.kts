@@ -25,6 +25,7 @@ kotlin {
     ).forEach {
         it.binaries.framework {
             baseName = "shared"
+            linkerOpts += "-ld64"
             export("dev.icerock.moko:resources:0.23.0")
             export("dev.icerock.moko:graphics:0.9.0")
         }
