@@ -58,13 +58,10 @@ import androidx.constraintlayout.compose.MotionScene
 import ru.mleykhner.shkedapp.android.R
 import ru.mleykhner.shkedapp.android.ui.theme.AppTheme
 import ru.mleykhner.shkedapp.android.ui.theme.weekdaysStyle
-import java.text.DateFormatSymbols
 import java.time.LocalDate
 import java.time.Period
-import java.time.format.TextStyle
 import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
-import java.util.Collections
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -329,16 +326,7 @@ fun MonthObserver(selectedDate: LocalDate) {
     }
 }
 
-fun getMonthLabel(date: LocalDate): String {
-    return date.month.getDisplayName(
-        TextStyle.FULL_STANDALONE,
-        Locale.getDefault()
-    )
-        .replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(Locale.getDefault())
-            else it.toString()
-        }
-}
+
 
 fun getWeek(date: LocalDate): List<LocalDate> {
     val weekFields = WeekFields.of(Locale.getDefault())
@@ -361,14 +349,7 @@ fun getMonth(date: LocalDate): List<LocalDate?> {
     return (0..< prevMonthOffset).map { null } + (0 ..< daysInMonth).map { firstDay.plusDays(it.toLong()) }
 }
 
-fun getShortWeekdaysSymbols(): List<String> {
-    val formatter = DateFormatSymbols.getInstance()
-    val weekFields = WeekFields.of(Locale.getDefault())
-    val firstDayOfWeek = weekFields.firstDayOfWeek.value
-    val names = formatter.shortWeekdays.drop(1)
-    Collections.rotate(names, -firstDayOfWeek)
-    return names
-}
+
 
 @Preview(
     //showBackground = true,
