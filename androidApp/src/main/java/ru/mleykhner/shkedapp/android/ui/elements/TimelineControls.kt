@@ -1,7 +1,6 @@
 package ru.mleykhner.shkedapp.android.ui.elements
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -34,7 +33,6 @@ import java.time.Month
 import java.time.format.TextStyle
 import java.util.Locale
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TimelineControls() {
     var initialDate by remember {
@@ -58,7 +56,9 @@ fun TimelineControls() {
     }
 
     Surface(
-        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+        tonalElevation = 1.dp,
+        shadowElevation = 1.dp
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -91,6 +91,8 @@ fun TimelineControls() {
                 }
             }
             Timeline(
+                modifier = Modifier
+                    .padding(bottom = 12.dp),
                 initialDate,
                 selectedDate,
                 { selectedDate = it },
@@ -103,7 +105,7 @@ fun TimelineControls() {
 
 @Preview(
     showBackground = true,
-    widthDp = 370
+    widthDp = 414
 )
 @Composable
 fun TimelineControls_Preview() {

@@ -45,6 +45,7 @@ import java.util.Collections
 
 @Composable
 fun Timeline(
+    modifier: Modifier = Modifier,
     initialDate: LocalDate,
     selectedDate: LocalDate,
     onDateChange: (LocalDate) -> Unit,
@@ -53,8 +54,8 @@ fun Timeline(
 ) {
 
     val density = LocalDensity.current
-    val dateSize = 46
-    val gapWidth = 12
+    val dateSize = 46f
+    val gapWidth = 12f
     val weekdaysNames = remember {
         getShortWeekdaysSymbols()
     }
@@ -74,14 +75,18 @@ fun Timeline(
     var dateOffset by remember {
         mutableIntStateOf(0)
     }
+    var generalOffset by remember {
+        mutableIntStateOf(0)
+    }
 
     LaunchedEffect(widthDp) {
-        daysOnScreen = (widthDp / (dateSize + gapWidth).dp).toInt() + 2
+        daysOnScreen = (widthDp / (dateSize + gapWidth).dp).toInt() + 1
+        generalOffset = (((dateSize + gapWidth) * daysOnScreen - gapWidth - widthDp.value) / 2f).toInt()
     }
 
     LaunchedEffect(dragOffset) {
         viewOffset = (with(density) { dragOffset.toDp() }.value % (dateSize + gapWidth)).dp
-        dateOffset = with(density) { dragOffset.toDp() }.value.toInt() / (dateSize + gapWidth)
+        dateOffset = (with(density) { dragOffset.toDp() }.value / (dateSize + gapWidth)).toInt()
     }
 
     LaunchedEffect(dateOffset) {
@@ -102,7 +107,7 @@ fun Timeline(
     }
 
     Box (
-        modifier = Modifier
+        modifier = modifier
             .scrollable(
                 orientation = Orientation.Horizontal,
                 state = rememberScrollableState { delta ->
@@ -116,16 +121,23 @@ fun Timeline(
                 }
             }
             .fillMaxWidth(),
-        contentAlignment = Alignment.CenterStart
+        //contentAlignment = Alignment.CenterEnd
     ) {
+//        Box(
+//            modifier = Modifier
+//                .background(Color.Red)
+//                .size(18.dp)
+//        )
         Row(
             horizontalArrangement = Arrangement.spacedBy(gapWidth.dp),
             modifier = Modifier
                 .offset(x = viewOffset)
+                .offset(x = generalOffset.dp)
+                .offset(x = -10.dp)
                 .requiredWidth(IntrinsicSize.Min)
 
         ) {
-            (0..daysOnScreen).forEach {
+            (-1 until daysOnScreen).forEach {
                 val id = it - dateOffset
                 val date = initialDate.plusDays(id.toLong())
                 Column(
@@ -191,6 +203,7 @@ fun Timeline_Preview() {
     AppTheme {
         Surface {
             Timeline(
+                modifier = Modifier,
                 initialDate,
                 selectedDate,
                 { selectedDate = it },
