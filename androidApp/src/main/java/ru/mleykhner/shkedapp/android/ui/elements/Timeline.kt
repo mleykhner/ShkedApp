@@ -41,6 +41,7 @@ import ru.mleykhner.shkedapp.android.ui.theme.weekdaysStyle
 import java.text.DateFormatSymbols
 import java.time.LocalDate
 import java.time.Month
+import java.time.temporal.ChronoUnit
 import java.util.Collections
 
 @Composable
@@ -53,6 +54,7 @@ fun Timeline(
     onVisibleMonthChange: (Month) -> Unit
 ) {
 
+    val firstDayOfWeek = java.util.Calendar.getInstance().firstDayOfWeek
     val density = LocalDensity.current
     val dateSize = 46f
     val gapWidth = 12f
@@ -78,6 +80,34 @@ fun Timeline(
     var generalOffset by remember {
         mutableIntStateOf(0)
     }
+    var closestFirstDayOfWeekOffset by remember {
+        mutableFloatStateOf(0f)
+    }
+
+    val scrollableState = rememberScrollableState { delta ->
+        dragOffset += delta
+        delta
+    }
+
+//    val coroutine = rememberCoroutineScope()
+//
+//    val scrollJob = with(coroutine) {
+//        launch(start = CoroutineStart.LAZY) {
+//            delay(1500)
+//            scrollableState.animateScrollBy((closestFirstDayOfWeekOffset - dragOffset))
+//        }
+//    }
+
+//    if (scrollableState.isScrollInProgress) {
+//        DisposableEffect(Unit) {
+//            onDispose {
+//                if (scrollJob.isActive){
+//                    scrollJob.cancel()
+//                }
+//                scrollJob.start()
+//            }
+//        }
+//    }
 
     LaunchedEffect(widthDp) {
         daysOnScreen = (widthDp / (dateSize + gapWidth).dp).toInt() + 1
@@ -87,6 +117,7 @@ fun Timeline(
     LaunchedEffect(dragOffset) {
         viewOffset = (with(density) { dragOffset.toDp() }.value % (dateSize + gapWidth)).dp
         dateOffset = (with(density) { dragOffset.toDp() }.value / (dateSize + gapWidth)).toInt()
+
     }
 
     LaunchedEffect(dateOffset) {
@@ -95,11 +126,16 @@ fun Timeline(
         for (it in 0..daysOnScreen) {
             val id = it - dateOffset
             val date = initialDate.plusDays(id.toLong())
+            if (date.dayOfWeek.value == firstDayOfWeek) {
+                closestFirstDayOfWeekOffset = with(density) {
+                    (initialDate.until(date, ChronoUnit.DAYS) * (dateSize + gapWidth)).dp.toPx()
+                }
+            }
             if (date.month == visibleMonth) {
                 hasVisibleMonth = true
-                break
+            } else {
+                newMonth = date.month
             }
-            newMonth = date.month
         }
         if (!hasVisibleMonth) {
             onVisibleMonthChange(newMonth)
@@ -110,10 +146,7 @@ fun Timeline(
         modifier = modifier
             .scrollable(
                 orientation = Orientation.Horizontal,
-                state = rememberScrollableState { delta ->
-                    dragOffset += delta
-                    delta
-                }
+                state = scrollableState
             )
             .onSizeChanged { size ->
                 widthDp = with(density) {
@@ -121,13 +154,15 @@ fun Timeline(
                 }
             }
             .fillMaxWidth(),
-        //contentAlignment = Alignment.CenterEnd
+        contentAlignment = Alignment.TopEnd
     ) {
 //        Box(
 //            modifier = Modifier
 //                .background(Color.Red)
-//                .size(18.dp)
-//        )
+//
+//        ) {
+//            Text(with(density){dragOffset.toDp().value.toInt().toString()})
+//        }
         Row(
             horizontalArrangement = Arrangement.spacedBy(gapWidth.dp),
             modifier = Modifier

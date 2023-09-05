@@ -105,7 +105,7 @@ fun TimelineControls() {
 
 @Preview(
     showBackground = true,
-    widthDp = 414
+    widthDp = 370
 )
 @Composable
 fun TimelineControls_Preview() {
