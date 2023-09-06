@@ -31,4 +31,17 @@
     <string name="share_with_classmates">Share with classmates</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+
+    <!--  Авторизация  -->
+    <string name="sign_in_verb">Sign In</string>
+    <string name="sign_up_verb">Sign Up</string>
+    <string name="sign_in_noun">Sign In</string>
+    <string name="sign_up_noun">Sign Up</string>
+    <string name="auth_screen_heading">Who are you></string>
+    <string name="auth_screen_description">Log in to watch tasks and add your own</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="show_password">Show password</string>
+    <string name="hide_password">Hide password</string>
+
 </resources>
