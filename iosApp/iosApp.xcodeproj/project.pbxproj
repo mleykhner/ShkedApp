@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,6 +11,15 @@
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* AttachmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* AttachmentView.swift */; };
+		AD1D55122A8650A2006687CF /* LessonCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D55112A8650A2006687CF /* LessonCard.swift */; };
+		AD1D55142A866F9D006687CF /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D55132A866F9D006687CF /* Typography.swift */; };
+		AD4102742AA3B7420059C1A7 /* InfiniteSnappingScrollGrid in Frameworks */ = {isa = PBXBuildFile; productRef = AD4102732AA3B7420059C1A7 /* InfiniteSnappingScrollGrid */; };
+		AD4102762AA3B7940059C1A7 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4102752AA3B7940059C1A7 /* TimelineView.swift */; };
+		AD5210952A87AC1000AF9D8F /* MainScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD5210942A87AC1000AF9D8F /* MainScreen.swift */; };
+		AD52109B2A87F6F900AF9D8F /* ScheduleCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD52109A2A87F6F900AF9D8F /* ScheduleCalendar.swift */; };
+		AD52109E2A88114800AF9D8F /* SwiftUIPager in Frameworks */ = {isa = PBXBuildFile; productRef = AD52109D2A88114800AF9D8F /* SwiftUIPager */; };
+		AD5CD3302A8F7B9100B41D64 /* WeekObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD5CD32F2A8F7B9100B41D64 /* WeekObserver.swift */; };
+		AD5CD3322A8F7CD600B41D64 /* MonthObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD5CD3312A8F7CD600B41D64 /* MonthObserver.swift */; };
 		ADD87A1F2A7D734600AF8D09 /* CustomProgressViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD87A1E2A7D734600AF8D09 /* CustomProgressViewStyle.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +43,13 @@
 		7555FF7B242A565900829871 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* AttachmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AD1D55112A8650A2006687CF /* LessonCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonCard.swift; sourceTree = "<group>"; };
+		AD1D55132A866F9D006687CF /* Typography.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
+		AD4102752AA3B7940059C1A7 /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
+		AD5210942A87AC1000AF9D8F /* MainScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreen.swift; sourceTree = "<group>"; };
+		AD52109A2A87F6F900AF9D8F /* ScheduleCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCalendar.swift; sourceTree = "<group>"; };
+		AD5CD32F2A8F7B9100B41D64 /* WeekObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekObserver.swift; sourceTree = "<group>"; };
+		AD5CD3312A8F7CD600B41D64 /* MonthObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthObserver.swift; sourceTree = "<group>"; };
 		ADD87A1E2A7D734600AF8D09 /* CustomProgressViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomProgressViewStyle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -42,6 +58,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD52109E2A88114800AF9D8F /* SwiftUIPager in Frameworks */,
+				AD4102742AA3B7420059C1A7 /* InfiniteSnappingScrollGrid in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,7 +94,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
-				058557BA273AAA24004C7B11 /* Assets.xcassets */,
+				AD1D550F2A86507A006687CF /* ui */,
 				7555FF82242A565900829871 /* AttachmentView.swift */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
@@ -91,6 +109,45 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		AD1D550F2A86507A006687CF /* ui */ = {
+			isa = PBXGroup;
+			children = (
+				AD5210932A87ABEE00AF9D8F /* theme */,
+				AD1D55102A865085006687CF /* elements */,
+				AD5210992A87F6DD00AF9D8F /* screens */,
+			);
+			path = ui;
+			sourceTree = "<group>";
+		};
+		AD1D55102A865085006687CF /* elements */ = {
+			isa = PBXGroup;
+			children = (
+				AD1D55112A8650A2006687CF /* LessonCard.swift */,
+				AD52109A2A87F6F900AF9D8F /* ScheduleCalendar.swift */,
+				AD5CD32F2A8F7B9100B41D64 /* WeekObserver.swift */,
+				AD5CD3312A8F7CD600B41D64 /* MonthObserver.swift */,
+				AD4102752AA3B7940059C1A7 /* TimelineView.swift */,
+			);
+			path = elements;
+			sourceTree = "<group>";
+		};
+		AD5210932A87ABEE00AF9D8F /* theme */ = {
+			isa = PBXGroup;
+			children = (
+				058557BA273AAA24004C7B11 /* Assets.xcassets */,
+				AD1D55132A866F9D006687CF /* Typography.swift */,
+			);
+			path = theme;
+			sourceTree = "<group>";
+		};
+		AD5210992A87F6DD00AF9D8F /* screens */ = {
+			isa = PBXGroup;
+			children = (
+				AD5210942A87AC1000AF9D8F /* MainScreen.swift */,
+			);
+			path = screens;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -111,6 +168,10 @@
 			dependencies = (
 			);
 			name = iosApp;
+			packageProductDependencies = (
+				AD52109D2A88114800AF9D8F /* SwiftUIPager */,
+				AD4102732AA3B7420059C1A7 /* InfiniteSnappingScrollGrid */,
+			);
 			productName = iosApp;
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
 			productType = "com.apple.product-type.application";
@@ -139,6 +200,10 @@
 				Base,
 			);
 			mainGroup = 7555FF72242A565900829871;
+			packageReferences = (
+				AD52109C2A88114800AF9D8F /* XCRemoteSwiftPackageReference "SwiftUIPager" */,
+				AD4102722AA3B7420059C1A7 /* XCRemoteSwiftPackageReference "InfiniteSnappingScrollGrid" */,
+			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -185,9 +250,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD5210952A87AC1000AF9D8F /* MainScreen.swift in Sources */,
+				AD5CD3302A8F7B9100B41D64 /* WeekObserver.swift in Sources */,
 				ADD87A1F2A7D734600AF8D09 /* CustomProgressViewStyle.swift in Sources */,
+				AD4102762AA3B7940059C1A7 /* TimelineView.swift in Sources */,
+				AD1D55122A8650A2006687CF /* LessonCard.swift in Sources */,
+				AD1D55142A866F9D006687CF /* Typography.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
+				AD5CD3322A8F7CD600B41D64 /* MonthObserver.swift in Sources */,
 				7555FF83242A565900829871 /* AttachmentView.swift in Sources */,
+				AD52109B2A87F6F900AF9D8F /* ScheduleCalendar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,6 +395,7 @@
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -356,6 +429,7 @@
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -398,6 +472,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AD4102722AA3B7420059C1A7 /* XCRemoteSwiftPackageReference "InfiniteSnappingScrollGrid" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CozmoNate/InfiniteSnappingScrollGrid.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.2.0;
+			};
+		};
+		AD52109C2A88114800AF9D8F /* XCRemoteSwiftPackageReference "SwiftUIPager" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/fermoya/SwiftUIPager.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AD4102732AA3B7420059C1A7 /* InfiniteSnappingScrollGrid */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD4102722AA3B7420059C1A7 /* XCRemoteSwiftPackageReference "InfiniteSnappingScrollGrid" */;
+			productName = InfiniteSnappingScrollGrid;
+		};
+		AD52109D2A88114800AF9D8F /* SwiftUIPager */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD52109C2A88114800AF9D8F /* XCRemoteSwiftPackageReference "SwiftUIPager" */;
+			productName = SwiftUIPager;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7555FF73242A565900829871 /* Project object */;
 }
