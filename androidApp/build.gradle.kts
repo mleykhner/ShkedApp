@@ -51,6 +51,7 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.1.1")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation("io.insert-koin:koin-android:$koinVersion")
+    implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
     implementation("androidx.navigation:navigation-compose:$navVersion")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha11")
 }
