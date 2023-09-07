@@ -1,33 +1,44 @@
 package ru.mleykhner.shkedapp.data.remote
 
-import de.nycode.bcrypt.hash
+import com.liftric.kvault.KVault
 import io.ktor.client.HttpClient
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import org.koin.mp.KoinPlatform
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import ru.mleykhner.shkedapp.data.remote.models.ServerErrorDTO
 import ru.mleykhner.shkedapp.data.remote.models.auth.AuthDTO
 import ru.mleykhner.shkedapp.data.remote.models.auth.SignUpDTO
 import ru.mleykhner.shkedapp.data.remote.models.toAuthResult
 
-class AuthService {
-    private val client: HttpClient = KoinPlatform.getKoin().get()
+class AuthService: KoinComponent {
+    private val client: HttpClient by inject()
+    private val kvault: KVault by inject()
+
     suspend fun signIn(email: String, password: String): List<AuthResult> {
-        val response = client.get(HttpRoutes.AUTH_SIGN_IN) {
-            url {
-                parameters.append("email", email)
-                parameters.append("passHash", hash(password).toString())
+        val response = try {
+            client.get(HttpRoutes.AUTH_SIGN_IN) {
+                url {
+                    parameters.append("email", email)
+                    parameters.append("password", password)
+                }
             }
+        } catch (e: HttpRequestTimeoutException) {
+            return listOf(AuthResult.TIMEOUT)
         }
         if (response.status.value in 200..299) {
             return try {
                 val result: AuthDTO = response.body()
-                // TODO: Добавить логику авторизации
+                // TODO: Улучшить логику авторизации
+                kvault.set("refreshToken", result.refreshToken)
+                kvault.set("accessToken", result.accessToken)
                 listOf(AuthResult.SUCCESS)
+
             } catch (e: NoTransformationFoundException) {
                 listOf(AuthResult.SERIALIZATION_ERROR)
             }
@@ -48,13 +59,20 @@ class AuthService {
     }
 
     suspend fun signUp(dto: SignUpDTO): List<AuthResult> {
-        val response = client.post(HttpRoutes.AUTH_SIGN_UP) {
-            setBody(dto)
+        val response = try {
+            client.post(HttpRoutes.AUTH_SIGN_UP) {
+                setBody(dto)
+            }
+        } catch (e: HttpRequestTimeoutException) {
+            return listOf(AuthResult.TIMEOUT)
         }
         if (response.status.value in 200..299) {
             return try {
                 val result: AuthDTO = response.body()
-                // TODO: Добавить логику регистрации
+                // TODO: Улучшить логику авторизации
+                kvault.set("refreshToken", result.refreshToken)
+                kvault.set("accessToken", result.accessToken)
+
                 listOf(AuthResult.SUCCESS)
             } catch (e: NoTransformationFoundException) {
                 listOf(AuthResult.SERIALIZATION_ERROR)
@@ -76,11 +94,15 @@ class AuthService {
     }
 
     suspend fun refresh(): AuthResult {
-        val response = client.get(HttpRoutes.AUTH_SIGN_IN) {
-            url {
-                //TODO: Получить Refresh токен
-                parameters.append("refreshToken", "")
+        val token = kvault.string("refreshToken") ?: return AuthResult.INVALID_REFRESH_TOKEN
+        val response = try {
+            client.get(HttpRoutes.AUTH_REFRESH) {
+                url {
+                    parameters.append("refreshToken", token)
+                }
             }
+        } catch (e: HttpRequestTimeoutException) {
+            return AuthResult.TIMEOUT
         }
         if (response.status.value in 200..299) {
             // TODO: Добавить логику авторизации
@@ -98,14 +120,21 @@ class AuthService {
     }
 
     suspend fun logout(): AuthResult {
-        val response = client.delete(HttpRoutes.AUTH_LOGOUT) {
-            url {
-                //TODO: Получить Refresh токен
-                parameters.append("refreshToken","")
+        val token = kvault.string("refreshToken") ?: return AuthResult.INVALID_REFRESH_TOKEN
+        val response = try {
+            client.delete(HttpRoutes.AUTH_LOGOUT) {
+                url {
+                    parameters.append("refreshToken", token)
+                }
             }
+        } catch (e: HttpRequestTimeoutException) {
+            return AuthResult.TIMEOUT
         }
         if (response.status.value in 200..299) {
-            // TODO: Добавить логику выхода
+            // TODO: Улучшить логику выхода
+            kvault.deleteObject("refreshToken")
+            kvault.deleteObject("accessToken")
+
             return AuthResult.SUCCESS
         }
         if (response.status.value in 400..499) {
@@ -120,7 +149,11 @@ class AuthService {
     }
 
     suspend fun logoutFromAll(): AuthResult {
-        val response = client.delete(HttpRoutes.AUTH_LOGOUT_FROM_ALL)
+        val response = try {
+            client.delete(HttpRoutes.AUTH_LOGOUT_FROM_ALL)
+        } catch (e: HttpRequestTimeoutException) {
+            return AuthResult.TIMEOUT
+        }
         if (response.status.value in 200..299) {
             // TODO: Добавить логику выхода
             return AuthResult.SUCCESS
@@ -144,6 +177,7 @@ enum class AuthResult {
     INVALID_REFRESH_TOKEN,
     SERIALIZATION_ERROR,
     INVALID_GROUP,
+    TIMEOUT,
     FAILED
 }
 
