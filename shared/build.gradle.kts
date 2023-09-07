@@ -43,6 +43,7 @@ kotlin {
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("io.insert-koin:koin-core:$koinVersion")
                 implementation("io.realm.kotlin:library-base:$realmVersion")
+                implementation("de.nycode:bcrypt:2.2.0")
                 api("dev.icerock.moko:resources:0.23.0")
             }
         }
