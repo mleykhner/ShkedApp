@@ -20,6 +20,8 @@ class AuthService: KoinComponent {
     private val client: HttpClient by inject()
     private val kvault: KVault by inject()
 
+    //TODO: Обработать ConnectException
+    //TODO: Перенести строки в отдельный файл
     suspend fun signIn(email: String, password: String): List<AuthResult> {
         val response = try {
             client.get(HttpRoutes.AUTH_SIGN_IN) {
