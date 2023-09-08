@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -42,9 +43,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import ru.mleykhner.shared_resources.SharedRes
 import ru.mleykhner.shkedapp.android.R
 import ru.mleykhner.shkedapp.android.ui.theme.AppTheme
+import ru.mleykhner.shkedapp.data.remote.AuthService
 import ru.mleykhner.shkedapp.utils.Strings
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -54,6 +58,9 @@ fun AuthScreen(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    //TODO: Убери, не позорься
+    val auth = koinInject<AuthService>()
+    val coroutine = rememberCoroutineScope()
 
     val (emailFieldFocus, passwordFieldFocus) = FocusRequester.createRefs()
     var email by remember {
@@ -180,7 +187,12 @@ fun AuthScreen(
                 )
                 Spacer(modifier = Modifier.height(18.dp))
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        coroutine.launch {
+                            val result = auth.signIn(email, password)
+                            Log.e("AuthScreen", result.joinToString { it.name + " " })
+                        }
+                              },
                     modifier = Modifier
                     .fillMaxWidth()
                 ) {

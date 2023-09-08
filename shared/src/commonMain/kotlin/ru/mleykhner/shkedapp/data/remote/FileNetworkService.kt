@@ -6,6 +6,7 @@ import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.get
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import ru.mleykhner.shkedapp.data.local.FileStorage
 import ru.mleykhner.shkedapp.data.models.AttachmentViewData
 
 class FileNetworkService(): KoinComponent {

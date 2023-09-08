@@ -23,7 +23,6 @@ import androidx.navigation.compose.rememberNavController
 import dev.icerock.moko.resources.StringResource
 import ru.mleykhner.shared_resources.SharedRes
 import ru.mleykhner.shkedapp.android.R
-import ru.mleykhner.shkedapp.android.ui.elements.Calendar
 import ru.mleykhner.shkedapp.android.ui.theme.AppTheme
 import ru.mleykhner.shkedapp.utils.Strings
 
@@ -70,7 +69,9 @@ fun MainScreen() {
     ) { scaffoldPadding ->
         NavHost(navController, startDestination = Screen.Schedule.route, modifier = Modifier.padding(scaffoldPadding)) {
             composable(Screen.News.route) { Text(Screen.News.route) }
-            composable(Screen.Schedule.route) { Calendar() }
+            composable(Screen.Schedule.route) { AuthScreen(
+                isPresented = true,
+                onDismiss = { /*TODO*/ }) }
             composable(Screen.Tasks.route) { Text(Screen.Tasks.route) }
         }
     }
