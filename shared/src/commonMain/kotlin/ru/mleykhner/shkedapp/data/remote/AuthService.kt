@@ -22,7 +22,6 @@ class AuthService: KoinComponent {
     private val kvault: KVault by inject()
     private val log: KmLog by inject()
 
-    //TODO: Обработать ConnectException
     //TODO: Разделить ответственность
     //TODO: Перенести строки в отдельный файл
 
@@ -37,8 +36,8 @@ class AuthService: KoinComponent {
         } catch (e: HttpRequestTimeoutException) {
             return listOf(AuthResult.TIMEOUT)
         } catch (e: Exception) {
-            log.e(e, msg = { e.message })
-            return listOf(AuthResult.FAILED)
+            log.e(e, msg = { e.cause })
+            return listOf(AuthResult.CONNECTION_ERROR, AuthResult.FAILED)
         }
         if (response.status.value in 200..299) {
             return try {
@@ -140,7 +139,7 @@ class AuthService: KoinComponent {
             return AuthResult.TIMEOUT
         }
         if (response.status.value in 200..299) {
-            // TODO: Улучшить логику выхода
+
             kvault.deleteObject("refreshToken")
             kvault.deleteObject("accessToken")
 
@@ -187,6 +186,7 @@ enum class AuthResult {
     SERIALIZATION_ERROR,
     INVALID_GROUP,
     TIMEOUT,
+    CONNECTION_ERROR,
     FAILED
 }
 
