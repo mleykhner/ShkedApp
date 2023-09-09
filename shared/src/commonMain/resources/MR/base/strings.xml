@@ -35,9 +35,9 @@
     <!--  Авторизация  -->
     <string name="sign_in_verb">Sign In</string>
     <string name="sign_up_verb">Sign Up</string>
-    <string name="sign_in_noun">Sign In</string>
-    <string name="sign_up_noun">Sign Up</string>
-    <string name="auth_screen_heading">Who are you></string>
+    <string name="sign_in_noun">I already have an account</string>
+    <string name="sign_up_noun">Create an account</string>
+    <string name="auth_screen_heading">Who are you?</string>
     <string name="auth_screen_description">Log in to watch tasks and add your own</string>
     <string name="email">Email</string>
     <string name="password">Password</string>

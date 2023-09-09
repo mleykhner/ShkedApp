@@ -31,7 +31,7 @@ kotlin {
         }
     }
 
-    val ktorVersion = "2.3.3"
+    val ktorVersion = "2.3.4"
     val koinVersion = "3.4.3"
     val realmVersion = "1.10.0"
 
@@ -44,13 +44,15 @@ kotlin {
                 implementation("io.insert-koin:koin-core:$koinVersion")
                 implementation("io.realm.kotlin:library-base:$realmVersion")
                 implementation("com.liftric:kvault:1.10.0")
+                api("org.lighthousegames:logging:1.3.0")
                 api("dev.icerock.moko:resources:0.23.0")
             }
         }
 
         val androidMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-android:$ktorVersion")
+                implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+                //implementation("io.ktor:ktor-client-android:$ktorVersion")
                 implementation("io.insert-koin:koin-android:$koinVersion")
             }
         }

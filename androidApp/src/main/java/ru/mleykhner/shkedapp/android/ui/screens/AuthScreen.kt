@@ -1,6 +1,7 @@
 package ru.mleykhner.shkedapp.android.ui.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,6 +62,7 @@ fun AuthScreen(
     //TODO: Убери, не позорься
     val auth = koinInject<AuthService>()
     val coroutine = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val (emailFieldFocus, passwordFieldFocus) = FocusRequester.createRefs()
     var email by remember {
@@ -190,6 +192,13 @@ fun AuthScreen(
                     onClick = {
                         coroutine.launch {
                             val result = auth.signIn(email, password)
+                            Toast.makeText(
+                                context,
+                                result.joinToString {
+                                                    it.name
+                                },
+                                Toast.LENGTH_LONG
+                            ).show()
                             Log.e("AuthScreen", result.joinToString { it.name + " " })
                         }
                               },

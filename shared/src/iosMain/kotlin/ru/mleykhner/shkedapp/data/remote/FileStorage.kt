@@ -1,4 +1,4 @@
-package ru.mleykhner.shkedapp.data.local
+package ru.mleykhner.shkedapp.data.remote
 
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned

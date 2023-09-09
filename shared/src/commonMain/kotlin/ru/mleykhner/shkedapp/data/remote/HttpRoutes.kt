@@ -1,7 +1,7 @@
 package ru.mleykhner.shkedapp.data.remote
 
 object HttpRoutes {
-    private const val BASE_URL = "http://77.91.78.226:80"
+    private const val BASE_URL = "https://4e4e-85-143-224-9.ngrok-free.app"
     private const val API = "$BASE_URL/API"
     private const val AUTH = "$API/Auth"
     const val AUTH_SIGN_UP = "$AUTH/SignUp"

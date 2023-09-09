@@ -1,4 +1,4 @@
-package ru.mleykhner.shkedapp.data.local
+package ru.mleykhner.shkedapp.data.remote
 
 import android.content.Context
 import kotlinx.coroutines.Dispatchers

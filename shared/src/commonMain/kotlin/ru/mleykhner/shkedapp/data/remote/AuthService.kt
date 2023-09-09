@@ -11,6 +11,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.lighthousegames.logging.KmLog
 import ru.mleykhner.shkedapp.data.remote.models.ServerErrorDTO
 import ru.mleykhner.shkedapp.data.remote.models.auth.AuthDTO
 import ru.mleykhner.shkedapp.data.remote.models.auth.SignUpDTO
@@ -19,9 +20,12 @@ import ru.mleykhner.shkedapp.data.remote.models.toAuthResult
 class AuthService: KoinComponent {
     private val client: HttpClient by inject()
     private val kvault: KVault by inject()
+    private val log: KmLog by inject()
 
     //TODO: Обработать ConnectException
+    //TODO: Разделить ответственность
     //TODO: Перенести строки в отдельный файл
+
     suspend fun signIn(email: String, password: String): List<AuthResult> {
         val response = try {
             client.get(HttpRoutes.AUTH_SIGN_IN) {
@@ -32,6 +36,9 @@ class AuthService: KoinComponent {
             }
         } catch (e: HttpRequestTimeoutException) {
             return listOf(AuthResult.TIMEOUT)
+        } catch (e: Exception) {
+            log.e(e, msg = { e.message })
+            return listOf(AuthResult.FAILED)
         }
         if (response.status.value in 200..299) {
             return try {

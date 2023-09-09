@@ -9,6 +9,11 @@ import io.ktor.serialization.kotlinx.json.json
 
 
 actual fun httpClient(config: HttpClientConfig<*>.() -> Unit) = HttpClient(Darwin) {
+    engine {
+        configureRequest {
+            setAllowsCellularAccess(true)
+        }
+    }
     install(ContentNegotiation) {
         json()
     }
@@ -16,9 +21,4 @@ actual fun httpClient(config: HttpClientConfig<*>.() -> Unit) = HttpClient(Darwi
         requestTimeoutMillis = 30_000
     }
     config(this)
-    engine {
-        configureRequest {
-            setAllowsCellularAccess(true)
-        }
-    }
 }
