@@ -7,30 +7,60 @@
 //
 
 import SwiftUI
+import Foundation
+import Combine
 
 struct TimelineView: View {
     
-    @GestureState private var dragOffset = CGSize.zero
-    @State var viewOffset = CGFloat(-42 + 6)
-    @State var dataOffset = 0
+    @State var itemSize: CGSize = CGSize(width: 46, height: 46)
+    @State var spacing: CGFloat = 12.0
     
+    @StateObject private var scrollAnimator = HorizontalScrollAnimator()
+    
+    @State private var itemsVisible = 0
+
     var body: some View {
+        
+        let fullOffset = scrollAnimator.dragOffset + scrollAnimator.offset
+        let fullItemSize = itemSize.width + spacing
+        
         GeometryReader { proxy in
-            HStack(spacing: 12) {
-                ForEach(0..<((Int(proxy.size.width) / (42 + 12)) + 2), id: \.self) { num in
-                    Text("\(num + dataOffset)")
-                        .frame(width: 42, height: 42)
+            HStack(spacing: spacing) {
+                ForEach(0..<itemsVisible, id: \.self) { num in
+                    let id = num - Int((fullOffset / fullItemSize).rounded())
+                    Text("\(id)")
+                        .frame(width: itemSize.width, height: itemSize.height)
+                        .background(Color.gray)
                 }
             }
-            .offset(x: viewOffset)
+            .offset(x: -itemSize.width)
+            .offset(x: fullOffset.remainder(dividingBy: fullItemSize))
+            .onAppear {
+                updateDatesVisible(proxy)
+            }
             .gesture(
                 DragGesture()
-                    .updating($dragOffset) { value, state, transaction in
-                        state = value.translation
-                        viewOffset = value.translation.x % (42 + 12)
+                    .onChanged { value in
+                        scrollAnimator.onDrag(value)
+                    }
+                    .onEnded { value in
+                        scrollAnimator.onDragEnded(value, duration: 2.0)
+                    }
+            )
+            .gesture(
+                TapGesture()
+                    .onEnded { _ in
+                        scrollAnimator.stop()
                     }
             )
         }
+        .frame(height: itemSize.height)
+    }
+    
+    private func updateDatesVisible(_ proxy: GeometryProxy) {
+        let frame = proxy.frame(in: .local)
+        let width = frame.width
+        itemsVisible = Int((width / (itemSize.width + spacing)).rounded(.up)) + 1
     }
 }
 
