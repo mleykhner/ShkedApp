@@ -10,7 +10,7 @@ import SwiftUI
 import Foundation
 import Combine
 
-struct TimelineView: View {
+struct HorizontalInfiniteScroll<Content: View>: View {
     
     @State var itemSize: CGSize = CGSize(width: 46, height: 46)
     @State var spacing: CGFloat = 12.0
@@ -18,6 +18,8 @@ struct TimelineView: View {
     @StateObject private var scrollAnimator = HorizontalScrollAnimator()
     
     @State private var itemsVisible = 0
+    
+    @ViewBuilder let viewBuilder: (Int) -> Content
 
     var body: some View {
         
@@ -28,9 +30,8 @@ struct TimelineView: View {
             HStack(spacing: spacing) {
                 ForEach(0..<itemsVisible, id: \.self) { num in
                     let id = num - Int((fullOffset / fullItemSize).rounded())
-                    Text("\(id)")
+                    viewBuilder(id)
                         .frame(width: itemSize.width, height: itemSize.height)
-                        .background(Color.gray)
                 }
             }
             .offset(x: -itemSize.width)
@@ -65,5 +66,9 @@ struct TimelineView: View {
 }
 
 #Preview {
-    TimelineView()
+    HorizontalInfiniteScroll() { id in
+        Text("\(id)")
+            .padding()
+            .background(Color.gray)
+    }
 }

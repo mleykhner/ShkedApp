@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-class HorizontalScrollAnimator: ObservableObject {
+class HorizontalInfiniteScrollAnimator: ObservableObject {
     
     @Published private var animationTimer: Timer? = nil
 
