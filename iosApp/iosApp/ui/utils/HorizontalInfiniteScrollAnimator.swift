@@ -12,9 +12,9 @@ import SwiftUI
 class HorizontalInfiniteScrollAnimator: ObservableObject {
     
     @Published private var animationTimer: Timer? = nil
-
     @Published private(set) var dragOffset: CGFloat = 0.0
     @Published private(set) var offset: CGFloat = 0.0
+    private var itemWidth: CGFloat? = nil
     
     var isAnimationFinished: Bool {
         !(animationTimer?.isValid ?? false)
@@ -35,6 +35,10 @@ class HorizontalInfiniteScrollAnimator: ObservableObject {
         }
     }
     
+    func setItemWidth(_ width: CGFloat) {
+        itemWidth = width
+    }
+    
     func scrollTo(_ end: CGFloat, duration: Double = 1.0) {
         animate(from: offset, to: end, duration: duration)
     }
@@ -49,6 +53,7 @@ class HorizontalInfiniteScrollAnimator: ObservableObject {
     
     func stop() {
         animationTimer?.invalidate()
+        animationTimer = nil
         startPosition = 0
         endPosition = 0
         scrollDuration = 0
@@ -56,16 +61,19 @@ class HorizontalInfiniteScrollAnimator: ObservableObject {
     }
     
     func onDrag(_ value: DragGesture.Value) {
+        if !isAnimationFinished {
+            stop()
+        }
         dragOffset = value.translation.width
     }
     
     func onDragEnded(_ value: DragGesture.Value, minDelta: CGFloat = 50, duration: Double = 1.0) {
         let predictedWidth = value.predictedEndTranslation.width
+        offset += dragOffset
+        dragOffset = 0
         if abs(value.translation.width - value.predictedEndTranslation.width) >= minDelta {
             animate(from: offset, to: (offset + predictedWidth), duration: duration)
         }
-        offset += dragOffset
-        dragOffset = 0
     }
     
     func nextStep() -> CGFloat {

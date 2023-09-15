@@ -10,16 +10,27 @@ import SwiftUI
 import Foundation
 import Combine
 
-struct HorizontalInfiniteScroll<Content: View>: View {
+struct HorizontalInfiniteScroll<Content>: View where Content: View {
     
-    @State var itemSize: CGSize = CGSize(width: 46, height: 46)
-    @State var spacing: CGFloat = 12.0
-    
-    @StateObject private var scrollAnimator = HorizontalScrollAnimator()
+    @State var itemSize: CGSize
+    @State var spacing: CGFloat
+    @ObservedObject private var scrollAnimator: HorizontalInfiniteScrollAnimator
+    @ViewBuilder let viewBuilder: (Int) -> Content
     
     @State private var itemsVisible = 0
-    
-    @ViewBuilder let viewBuilder: (Int) -> Content
+
+    init(
+        itemSize: CGSize = CGSize(width: 46, height: 46),
+        spacing: CGFloat = 12.0,
+        scrollAnimator: HorizontalInfiniteScrollAnimator = HorizontalInfiniteScrollAnimator(),
+        @ViewBuilder viewBuilder: @escaping (Int) -> Content
+    ) {
+        self.itemSize = itemSize
+        self.spacing = spacing
+        self.viewBuilder = viewBuilder
+        self.scrollAnimator = scrollAnimator
+        self.scrollAnimator.setItemWidth(itemSize.width + spacing)
+    }
 
     var body: some View {
         
@@ -29,7 +40,7 @@ struct HorizontalInfiniteScroll<Content: View>: View {
         GeometryReader { proxy in
             HStack(spacing: spacing) {
                 ForEach(0..<itemsVisible, id: \.self) { num in
-                    let id = num - Int((fullOffset / fullItemSize).rounded())
+                    let id = num - Int((fullOffset / fullItemSize).rounded()) - 1
                     viewBuilder(id)
                         .frame(width: itemSize.width, height: itemSize.height)
                 }
@@ -47,13 +58,20 @@ struct HorizontalInfiniteScroll<Content: View>: View {
                     .onEnded { value in
                         scrollAnimator.onDragEnded(value, duration: 2.0)
                     }
+                    .simultaneously(with:
+                                        TapGesture()
+                        .onEnded { _ in
+                            scrollAnimator.stop()
+                        }
+
+                                   )
             )
-            .gesture(
-                TapGesture()
-                    .onEnded { _ in
-                        scrollAnimator.stop()
-                    }
-            )
+//            .gesture(
+//                TapGesture()
+//                    .onEnded { _ in
+//                        scrollAnimator.stop()
+//                    }
+//            )
         }
         .frame(height: itemSize.height)
     }
@@ -68,7 +86,6 @@ struct HorizontalInfiniteScroll<Content: View>: View {
 #Preview {
     HorizontalInfiniteScroll() { id in
         Text("\(id)")
-            .padding()
             .background(Color.gray)
     }
 }
