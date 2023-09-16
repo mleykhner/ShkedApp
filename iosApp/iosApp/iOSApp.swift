@@ -6,6 +6,7 @@ struct iOSApp: App {
     
     init() {
         HelperKt.doInitKoin()
+        StartNapierKt.startNapier()
     }
     
 	var body: some Scene {

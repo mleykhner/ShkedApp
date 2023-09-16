@@ -1,7 +1,7 @@
 package ru.mleykhner.shkedapp.data.remote.models
 
 import kotlinx.serialization.Serializable
-import ru.mleykhner.shkedapp.data.remote.AuthResult
+import ru.mleykhner.shkedapp.data.remote.models.auth.AuthResult
 
 @Serializable
 data class ServerErrorDTO(

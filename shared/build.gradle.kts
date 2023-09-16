@@ -44,6 +44,8 @@ kotlin {
                 implementation("io.insert-koin:koin-core:$koinVersion")
                 implementation("io.realm.kotlin:library-base:$realmVersion")
                 implementation("com.liftric:kvault:1.10.0")
+                implementation("io.github.aakira:napier:2.6.1")
+                implementation("io.ktor:ktor-client-auth:$ktorVersion")
                 api("org.lighthousegames:logging:1.3.0")
                 api("dev.icerock.moko:resources:0.23.0")
             }

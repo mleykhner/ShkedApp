@@ -49,7 +49,7 @@ import org.koin.compose.koinInject
 import ru.mleykhner.shared_resources.SharedRes
 import ru.mleykhner.shkedapp.android.R
 import ru.mleykhner.shkedapp.android.ui.theme.AppTheme
-import ru.mleykhner.shkedapp.data.remote.AuthService
+import ru.mleykhner.shkedapp.data.remote.AuthServiceImpl
 import ru.mleykhner.shkedapp.utils.Strings
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -60,7 +60,7 @@ fun AuthScreen(
     modifier: Modifier = Modifier
 ) {
     //TODO: Убери, не позорься
-    val auth = koinInject<AuthService>()
+    val auth = koinInject<AuthServiceImpl>()
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current
 
