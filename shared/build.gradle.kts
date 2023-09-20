@@ -41,11 +41,13 @@ kotlin {
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+                implementation("io.ktor:ktor-client-websockets:$ktorVersion")
+                implementation("io.ktor:ktor-client-auth:$ktorVersion")
                 implementation("io.insert-koin:koin-core:$koinVersion")
                 implementation("io.realm.kotlin:library-base:$realmVersion")
                 implementation("com.liftric:kvault:1.10.0")
                 implementation("io.github.aakira:napier:2.6.1")
-                implementation("io.ktor:ktor-client-auth:$ktorVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
                 api("org.lighthousegames:logging:1.3.0")
                 api("dev.icerock.moko:resources:0.23.0")
             }
@@ -68,6 +70,10 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+                implementation("io.insert-koin:koin-test:$koinVersion")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+                implementation("io.ktor:ktor-client-mock:$ktorVersion")
             }
         }
     }

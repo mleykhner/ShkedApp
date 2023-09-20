@@ -3,16 +3,16 @@ package ru.mleykhner.shkedapp.data.remote
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.HttpTimeout
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.plugins.websocket.WebSockets
+import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 
 actual fun httpClient(config: HttpClientConfig<*>.() -> Unit) = HttpClient(OkHttp) {
-    install(ContentNegotiation) {
-        json()
-    }
-    install(HttpTimeout) {
-        requestTimeoutMillis = 30_000
+    install(WebSockets)
+    engine {
+        preconfigured = OkHttpClient.Builder()
+            .pingInterval(6, TimeUnit.SECONDS)
+            .build()
     }
     config(this)
 }

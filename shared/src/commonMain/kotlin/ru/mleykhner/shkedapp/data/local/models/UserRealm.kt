@@ -1,4 +1,4 @@
-package ru.mleykhner.shkedapp.data.local
+package ru.mleykhner.shkedapp.data.local.models
 
 import io.realm.kotlin.ext.realmSetOf
 import io.realm.kotlin.types.RealmObject

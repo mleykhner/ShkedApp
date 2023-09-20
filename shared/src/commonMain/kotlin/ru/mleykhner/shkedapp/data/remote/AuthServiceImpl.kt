@@ -9,8 +9,10 @@ import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
+import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.HttpHeaders
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
@@ -21,35 +23,10 @@ import ru.mleykhner.shkedapp.data.remote.models.auth.SignUpDTO
 import ru.mleykhner.shkedapp.data.remote.models.auth.toBearerTokens
 import ru.mleykhner.shkedapp.data.remote.models.toAuthResult
 
-interface PreferencesService {
-    fun updateTokens(tokens: BearerTokens)
-    fun getTokens(): BearerTokens?
-    fun deleteTokens()
-}
-
-class PreferencesServiceImpl: PreferencesService, KoinComponent {
-    private val kVault: KVault by inject { parametersOf("authInfo") }
-    override fun updateTokens(tokens: BearerTokens) {
-        kVault.set("accessToken", tokens.accessToken)
-        kVault.set("refreshToken", tokens.refreshToken)
-    }
-
-    override fun getTokens(): BearerTokens? {
-        val accessToken = kVault.string("accessToken") ?: return null
-        val refreshToken = kVault.string("refreshToken") ?: return null
-        return BearerTokens(accessToken, refreshToken)
-    }
-
-    override fun deleteTokens() {
-        kVault.deleteObject("accessToken")
-        kVault.deleteObject("refreshToken")
-    }
-}
-
 class AuthServiceImpl: AuthService, KoinComponent {
     private val client: HttpClient by inject()
     //private val kvault: KVault by inject()
-    private val prefs: PreferencesService by inject()
+    private val prefs: TokensService by inject()
     //private val log: KmLog by inject()
 
     //TODO: Разделить ответственность
@@ -109,6 +86,9 @@ class AuthServiceImpl: AuthService, KoinComponent {
         val response = try {
             client.post(HttpRoutes.AUTH_SIGN_UP) {
                 setBody(dto)
+                headers {
+                    append(HttpHeaders.ContentType, "application/json")
+                }
             }
         } catch (e: HttpRequestTimeoutException) {
             return listOf(AuthResult.TIMEOUT)

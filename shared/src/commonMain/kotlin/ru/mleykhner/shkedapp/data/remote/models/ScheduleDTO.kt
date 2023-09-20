@@ -1,26 +1,18 @@
 package ru.mleykhner.shkedapp.data.remote.models
 
+import io.realm.kotlin.ext.toRealmList
 import kotlinx.serialization.Serializable
+import ru.mleykhner.shkedapp.data.local.models.ScheduleRealm
 
 @Serializable
 data class ScheduleDTO(
     val groupName: String,
-    val schedule: GroupScheduleDTO
+    val schedule: List<WeekdayDTO>
 )
 
-@Serializable
-data class GroupScheduleDTO(
-    val week: List<WeekdayScheduleDTO>
-)
-
-@Serializable
-data class WeekdayScheduleDTO(
-    val daysSchedules: List<DaysScheduleDTO>,
-    val dayNumber: Int
-)
-
-@Serializable
-data class DaysScheduleDTO(
-    val dates: List<String>,
-    var classes: List<LessonDTO>
-)
+fun ScheduleDTO.toRealmObject(): ScheduleRealm {
+    return ScheduleRealm().apply {
+        groupName = this@toRealmObject.groupName
+        schedule = this@toRealmObject.schedule.map { it.toRealmObject() }.toRealmList()
+    }
+}
