@@ -1,6 +1,7 @@
 package ru.mleykhner.shkedapp.data.local
 
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.websocket.webSocket
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import kotlinx.datetime.LocalDate
@@ -9,12 +10,15 @@ import org.koin.core.component.inject
 import ru.mleykhner.shkedapp.data.local.models.ScheduleRealm
 import ru.mleykhner.shkedapp.data.local.models.toViewDataObject
 import ru.mleykhner.shkedapp.data.models.LessonViewData
+import ru.mleykhner.shkedapp.data.remote.HttpRoutes
 
 class ScheduleServiceImpl: ScheduleService, KoinComponent {
     val realm: Realm by inject()
     val client: HttpClient by inject()
     override suspend fun refresh(group: String, progressHandler: (Int) -> Unit): ScheduleRefreshResult {
+        client.webSocket(HttpRoutes.SCHEDULE) {
 
+        }
         TODO("Not yet implemented")
     }
 
