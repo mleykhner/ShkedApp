@@ -1,12 +1,10 @@
 package ru.mleykhner.shkedapp.data.remote
 
-import com.liftric.kvault.KVault
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpRequestTimeoutException
-import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
@@ -15,7 +13,6 @@ import io.ktor.client.request.setBody
 import io.ktor.http.HttpHeaders
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import org.koin.core.parameter.parametersOf
 import ru.mleykhner.shkedapp.data.remote.models.ServerErrorDTO
 import ru.mleykhner.shkedapp.data.remote.models.auth.AuthDTO
 import ru.mleykhner.shkedapp.data.remote.models.auth.AuthResult
@@ -37,8 +34,9 @@ class AuthServiceImpl: AuthService, KoinComponent {
         val response = try {
             client.get(HttpRoutes.AUTH_SIGN_IN) {
                 url {
-                    parameters.append("email", email)
-                    parameters.append("password", password)
+                    //TODO: Написать маленькими буквами
+                    parameters.append("Email", email)
+                    parameters.append("Password", password)
                 }
             }
         } catch (e: HttpRequestTimeoutException) {

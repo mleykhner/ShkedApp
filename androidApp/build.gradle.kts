@@ -39,8 +39,8 @@ android {
 }
 
 val koinVersion = "3.4.3"
-val navVersion = "2.7.0"
-val composeVersion = "1.5.0"
+val navVersion = "2.7.3"
+val composeVersion = "1.6.0-alpha06"
 
 dependencies {
     implementation(project(":shared"))
