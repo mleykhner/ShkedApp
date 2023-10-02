@@ -10,6 +10,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -42,6 +45,9 @@ val items = listOf(
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
+    var authScreenPresented by remember {
+        mutableStateOf(false)
+    }
     Scaffold(
         bottomBar = {
             NavigationBar {
@@ -69,12 +75,13 @@ fun MainScreen() {
     ) { scaffoldPadding ->
         NavHost(navController, startDestination = Screen.Schedule.route, modifier = Modifier.padding(scaffoldPadding)) {
             composable(Screen.News.route) { Text(Screen.News.route) }
-            composable(Screen.Schedule.route) { AuthScreen(
-                isPresented = true,
-                onDismiss = { /*TODO*/ }) }
+            composable(Screen.Schedule.route) {  }
             composable(Screen.Tasks.route) { Text(Screen.Tasks.route) }
         }
     }
+    AuthScreen(
+        isPresented = authScreenPresented,
+        onDismiss = { authScreenPresented = false })
 }
 
 @Preview(
