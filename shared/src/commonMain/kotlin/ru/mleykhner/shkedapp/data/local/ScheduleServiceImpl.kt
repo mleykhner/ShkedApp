@@ -24,8 +24,8 @@ class ScheduleServiceImpl: ScheduleService, KoinComponent {
 
     override fun getScheduleByDate(group: String, date: LocalDate): List<LessonViewData>? {
         val schedule = realm.query<ScheduleRealm>("groupName == $0", group).first().find() ?: return null
-        val weekdaySchedule = schedule.schedule.query("dayNumber == $0", date.dayOfWeek.ordinal + 1).first().find() ?: return emptyList()
-        val dateSchedule = weekdaySchedule.daySchedule.firstOrNull { it.dates.contains(date.toString()) } ?: return emptyList()
+        val weekdaySchedule = schedule.week.query("dayNumber == $0", date.dayOfWeek.ordinal + 1).first().find() ?: return emptyList()
+        val dateSchedule = weekdaySchedule.daysSchedules.firstOrNull { it.dates.contains(date.toString()) } ?: return emptyList()
         return dateSchedule.lessons.toList().mapNotNull { it.toViewDataObject() }
     }
 }

@@ -10,7 +10,6 @@ import ru.mleykhner.shkedapp.utils.startNapier
 class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        
         startNapier()
         startKoin {
             androidContext(this@MainApplication)

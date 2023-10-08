@@ -7,12 +7,12 @@ import ru.mleykhner.shkedapp.data.local.models.ScheduleRealm
 @Serializable
 data class ScheduleDTO(
     val groupName: String,
-    val schedule: List<WeekdayDTO>
+    val week: List<WeekdayDTO>
 )
 
 fun ScheduleDTO.toRealmObject(): ScheduleRealm {
     return ScheduleRealm().apply {
         groupName = this@toRealmObject.groupName
-        schedule = this@toRealmObject.schedule.map { it.toRealmObject() }.toRealmList()
+        week = this@toRealmObject.week.map { it.toRealmObject() }.toRealmList()
     }
 }

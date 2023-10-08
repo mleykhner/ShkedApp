@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -41,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.mleykhner.shared_resources.SharedRes
@@ -54,7 +56,7 @@ import ru.mleykhner.shkedapp.utils.toLocalizedString
 fun LessonCard(lesson: LessonViewData, modifier: Modifier = Modifier) {
 
     var expanded by remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
     val elevation by animateDpAsState(if (expanded) 3.dp else 1.dp, label = "cardElevation")
 
@@ -229,10 +231,12 @@ fun LessonCard(lesson: LessonViewData, modifier: Modifier = Modifier) {
                             Text(
                                 text = lesson.lecturer ?: "–",
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onBackground
+                                color = MaterialTheme.colorScheme.onBackground,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                         IconButton(
+                            modifier = Modifier.requiredSize(42.dp),
                             onClick = { /*TODO*/ },
                             enabled = !lesson.lecturer.isNullOrEmpty()
                         ) {

@@ -2,7 +2,7 @@ package ru.mleykhner.shkedapp.data.remote
 
 object HttpRoutes {
     private const val BASE_URL = "https://shkedapp.ru"
-    private const val BASE_URL_WS = "wss://shkedapp.ru:7195"
+    private const val BASE_URL_WS = "wss://shkedapp.ru"
     private const val API = "$BASE_URL/API"
     private const val AUTH = "$API/Auth"
     const val AUTH_SIGN_UP = "$AUTH/SignUp"

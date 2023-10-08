@@ -54,4 +54,5 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
     implementation("androidx.navigation:navigation-compose:$navVersion")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha11")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
 }
