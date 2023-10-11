@@ -1,23 +1,13 @@
 package ru.mleykhner.shkedapp.data
 
-import io.ktor.client.HttpClient
-import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.http.appendPathSegments
-import ru.mleykhner.shkedapp.data.remote.HttpRoutes
-import ru.mleykhner.shkedapp.data.remote.httpClient
+import kotlinx.datetime.LocalDate
+import ru.mleykhner.shkedapp.data.models.LessonViewData
 
-class ScheduleService(
-    val client: HttpClient = httpClient()
-) {
+interface ScheduleService {
+    suspend fun refresh(group: String, progressHandler: (Int) -> Unit = {}): ScheduleRefreshResult
+    fun getScheduleByDate(group: String, date: LocalDate): List<LessonViewData>?
+}
 
-    suspend fun load(group: String) {
-        val response = client.get(HttpRoutes.GROUPS) {
-            url {
-                appendPathSegments(group)
-            }
-            header("User-Id", "developer")
-        }
-    }
-
+enum class ScheduleRefreshResult {
+    REFRESHED, HAS_CHANGES, OFFLINE, FAILED
 }

@@ -3,6 +3,7 @@ package ru.mleykhner.shkedapp.android.ui.screens
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -59,7 +60,7 @@ fun MainScreen() {
                         label = { Text(Strings(LocalContext.current).get(screen.nameId, emptyList())) },
                         selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                         onClick = {
-                            Log.e("Navigation Bar", "Page changed to: ${screen.route}")
+                            Log.v("Navigation Bar", "Page changed to: ${screen.route}")
                             navController.navigate(screen.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
@@ -75,7 +76,7 @@ fun MainScreen() {
     ) { scaffoldPadding ->
         NavHost(navController, startDestination = Screen.Schedule.route, modifier = Modifier.padding(scaffoldPadding)) {
             composable(Screen.News.route) { Text(Screen.News.route) }
-            composable(Screen.Schedule.route) {  }
+            composable(Screen.Schedule.route) { ScheduleScreen() }
             composable(Screen.Tasks.route) { Text(Screen.Tasks.route) }
         }
     }

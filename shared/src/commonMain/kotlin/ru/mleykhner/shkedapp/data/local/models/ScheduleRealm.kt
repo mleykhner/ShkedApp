@@ -8,5 +8,5 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 class ScheduleRealm: RealmObject {
     @PrimaryKey
     var groupName: String = ""
-    var schedule: RealmList<WeekdayRealm> = realmListOf()
+    var week: RealmList<WeekdayRealm> = realmListOf()
 }
