@@ -1,5 +1,6 @@
 package ru.mleykhner.shkedapp.data.remote
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +16,7 @@ import platform.Foundation.create
 import platform.Foundation.stringByAppendingPathComponent
 import platform.Foundation.writeToFile
 
+@ExperimentalForeignApi
 actual class FileStorage {
     private val fileManager = NSFileManager.defaultManager
     private val documentDirectory = NSSearchPathForDirectoriesInDomains(

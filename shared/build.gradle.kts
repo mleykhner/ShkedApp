@@ -1,16 +1,20 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import org.jetbrains.kotlin.konan.properties.Properties
+
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization") version "1.8.21"
     id("com.android.library")
     id("io.realm.kotlin") version "1.10.0"
     id("dev.icerock.mobile.multiplatform-resources")
+    id("com.codingfeline.buildkonfig")
 }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
     targetHierarchy.default()
 
-    android {
+    androidTarget {
         compilations.all {
             kotlinOptions {
                 jvmTarget = "1.8"
@@ -55,6 +59,7 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
+                dependsOn(commonMain)
                 implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
                 implementation("io.insert-koin:koin-android:$koinVersion")
             }
@@ -62,6 +67,7 @@ kotlin {
 
         val iosMain by getting {
             dependencies {
+                dependsOn(commonMain)
                 implementation("io.ktor:ktor-client-darwin:$ktorVersion")
             }
         }
@@ -81,12 +87,22 @@ kotlin {
 android {
     namespace = "ru.mleykhner.shkedapp"
     compileSdk = 33
-    defaultConfig {
-        minSdk = 26
+    buildFeatures {
+        buildConfig = true
     }
 }
 
 multiplatformResources {
     multiplatformResourcesPackage = "ru.mleykhner.shared_resources"
     multiplatformResourcesClassName = "SharedRes"
+}
+
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
+
+buildkonfig {
+    packageName = "ru.mleykhner.shkedapp"
+    defaultConfigs {
+        buildConfigField(STRING, "apiKey", properties.getProperty("apiKey"))
+    }
 }
