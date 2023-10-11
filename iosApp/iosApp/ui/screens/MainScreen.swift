@@ -41,8 +41,7 @@ struct MainScreen: View {
                 }
             }
             .padding([.top], 8)
-            .background(Color("primaryContainer").opacity(0.5))
-            .background(Material.ultraThin)
+            .background(Material.bar)
             
         }
     }
