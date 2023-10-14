@@ -7,6 +7,7 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -22,9 +23,7 @@ import ru.mleykhner.shkedapp.data.remote.models.toAuthResult
 
 class AuthServiceImpl: AuthService, KoinComponent {
     private val client: HttpClient by inject()
-    //private val kvault: KVault by inject()
     private val prefs: TokensService by inject()
-    //private val log: KmLog by inject()
 
     //TODO: Разделить ответственность
     //TODO: Перенести строки в отдельный файл
@@ -34,9 +33,8 @@ class AuthServiceImpl: AuthService, KoinComponent {
         val response = try {
             client.get(HttpRoutes.AUTH_SIGN_IN) {
                 url {
-                    //TODO: Написать маленькими буквами
-                    parameters.append("Email", email)
-                    parameters.append("Password", password)
+                    parameters.append("email", email)
+                    parameters.append("password", password)
                 }
             }
         } catch (e: HttpRequestTimeoutException) {
@@ -44,15 +42,12 @@ class AuthServiceImpl: AuthService, KoinComponent {
             return listOf(AuthResult.TIMEOUT)
         } catch (e: Exception) {
             Napier.e("Sign In FAILED: ", throwable = e)
-            //log.e(e, msg = { e.cause })
             return listOf(AuthResult.CONNECTION_ERROR, AuthResult.FAILED)
         }
         if (response.status.value in 200..299) {
             Napier.v("Sign In response OK, code: ${response.status.value}")
             return try {
                 val result: AuthDTO = response.body()
-//                kvault.set("refreshToken", result.refreshToken)
-//                kvault.set("accessToken", result.accessToken)
                 prefs.updateTokens(result.toBearerTokens())
                 Napier.v("Sign In tokens refreshed")
                 listOf(AuthResult.SUCCESS)
@@ -81,12 +76,11 @@ class AuthServiceImpl: AuthService, KoinComponent {
     }
 
     override suspend fun signUp(dto: SignUpDTO): List<AuthResult> {
+        Napier.v("Signing Up...")
         val response = try {
             client.post(HttpRoutes.AUTH_SIGN_UP) {
                 setBody(dto)
-                headers {
-                    append(HttpHeaders.ContentType, "application/json")
-                }
+                header(HttpHeaders.ContentType, "application/json")
             }
         } catch (e: HttpRequestTimeoutException) {
             return listOf(AuthResult.TIMEOUT)
@@ -94,9 +88,6 @@ class AuthServiceImpl: AuthService, KoinComponent {
         if (response.status.value in 200..299) {
             return try {
                 val result: AuthDTO = response.body()
-                // TODO: Улучшить логику авторизации
-//                kvault.set("refreshToken", result.refreshToken)
-//                kvault.set("accessToken", result.accessToken)
                 prefs.updateTokens(result.toBearerTokens())
                 listOf(AuthResult.SUCCESS)
             } catch (e: NoTransformationFoundException) {

@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.konan.properties.Properties
 
 plugins {
     kotlin("multiplatform")
+    kotlin("native.cocoapods")
     kotlin("plugin.serialization") version "1.8.21"
     id("com.android.library")
     id("io.realm.kotlin") version "1.10.0"
@@ -38,6 +39,7 @@ kotlin {
     val ktorVersion = "2.3.4"
     val koinVersion = "3.4.3"
     val realmVersion = "1.10.0"
+    val mokoMvvmVersion = "0.16.1"
 
     sourceSets {
         val commonMain by getting {
@@ -54,6 +56,8 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
                 api("org.lighthousegames:logging:1.3.0")
                 api("dev.icerock.moko:resources:0.23.0")
+                api("dev.icerock.moko:mvvm-core:$mokoMvvmVersion")
+                api("dev.icerock.moko:mvvm-flow:$mokoMvvmVersion")
             }
         }
 
@@ -62,6 +66,7 @@ kotlin {
                 dependsOn(commonMain)
                 implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
                 implementation("io.insert-koin:koin-android:$koinVersion")
+                api("dev.icerock.moko:mvvm-flow-compose:$mokoMvvmVersion")
             }
         }
 
@@ -80,6 +85,17 @@ kotlin {
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("io.ktor:ktor-client-mock:$ktorVersion")
             }
+        }
+    }
+
+    cocoapods {
+        version = "1.0"
+        summary = "Some description for a Kotlin/Native module"
+        homepage = "Link to a Kotlin/Native module homepage"
+        framework {
+            baseName = "MultiPlatformLibrary"
+            export("dev.icerock.moko:mvvm-core:$mokoMvvmVersion")
+            export("dev.icerock.moko:mvvm-flow:$mokoMvvmVersion")
         }
     }
 }
