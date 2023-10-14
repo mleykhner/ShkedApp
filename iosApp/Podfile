@@ -1,0 +1,38 @@
+# указываем откуда будем скачивать зависимости - с официального репозитория cocoapods
+source 'https://cdn.cocoapods.org'
+
+# скрывает предупреждения от библиотек CocoaPods.
+inhibit_all_warnings!
+
+# использование динамических фреймворков вместо статических библиотек для модулей
+use_frameworks!
+# указывает платформу и ее версию, нужно для проверки всех зависимостей на поддержку этой версии этой платформы
+platform :ios, '15.0'
+
+# маппинг конфигураций
+project 'iosApp',
+  'debug' => :debug, 'release' => :release
+
+# обходной путь для https://github.com/CocoaPods/CocoaPods/issues/8073
+# нужно для корректного отключения невалидного кеша MultiPlatformLibrary.framework
+install! 'cocoapods', :disable_input_output_paths => true
+
+# объявление зависимостей для конкретного таргета
+target 'iosApp' do
+  # зависимость нашей библиотеки, о ней дальше
+  # pod 'MultiPlatformLibrary', :path => '../shared'
+  # moko поды
+  pod 'mokoMvvmFlowSwiftUI', :podspec => 'https://raw.githubusercontent.com/icerockdev/moko-mvvm/release/0.16.1/mokoMvvmFlowSwiftUI.podspec'
+
+
+  # остальные поды, которые могут понадобиться во время разработки
+  # pod 'Firebase', '~> 6.33.0'
+  # pod 'R.swift', '~> 5.3.1'           # Code generation for resources  https://github.com/mac-cain13/R.swift
+  # pod 'ProgressHUD', '~> 2.70'        # Loading animation https://github.com/relatedcode/ProgressHUD
+  # pod 'Toast-Swift', '~> 5.0.1'       # Showing toasts https://github.com/scalessec/Toast-Swift
+  # pod 'XLPagerTabStrip', '~> 9.0'     # Tabs controller like an Android PagerTabStrip
+  # pod 'AlamofireImage', '~> 3.6.0'    # Image loader with cache https://github.com/Alamofire/AlamofireImage
+  # pod 'Down', '~> 0.10.0'             # Markdown rendering https://github.com/johnxnguyen/Down
+  # pod 'RxKeyboard', '~> 1.0.0'        # Reactive way of observing keyboard frame changes https://github.com/RxSwiftCommunity/RxKeyboard
+  # ...
+end

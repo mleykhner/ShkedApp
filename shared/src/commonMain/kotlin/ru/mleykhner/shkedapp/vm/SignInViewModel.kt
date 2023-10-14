@@ -1,12 +1,16 @@
 package ru.mleykhner.shkedapp.vm
 
+import dev.icerock.moko.mvvm.flow.CFlow
+import dev.icerock.moko.mvvm.flow.CMutableStateFlow
+import dev.icerock.moko.mvvm.flow.CStateFlow
+import dev.icerock.moko.mvvm.flow.cFlow
+import dev.icerock.moko.mvvm.flow.cMutableStateFlow
+import dev.icerock.moko.mvvm.flow.cStateFlow
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -20,22 +24,22 @@ class SignInViewModel: ViewModel(), KoinComponent {
 
     private val authService: AuthService by inject()
 
-    private val _email: MutableStateFlow<String> = MutableStateFlow("")
-    val email: StateFlow<String> = _email
+    private val _email: CMutableStateFlow<String> = MutableStateFlow("").cMutableStateFlow()
+    val email: CStateFlow<String> = _email.cStateFlow()
 
-    private val _password: MutableStateFlow<String> = MutableStateFlow("")
-    val password: StateFlow<String> = _password
+    private val _password: CMutableStateFlow<String> = MutableStateFlow("").cMutableStateFlow()
+    val password: CStateFlow<String> = _password.cStateFlow()
 
-    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    private val _isLoading: CMutableStateFlow<Boolean> = MutableStateFlow(false).cMutableStateFlow()
+    val isLoading: CStateFlow<Boolean> = _isLoading.cStateFlow()
 
-    private val _areCredentialsWrong: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val areCredentialsWrong: StateFlow<Boolean> = _areCredentialsWrong
+    private val _areCredentialsWrong: CMutableStateFlow<Boolean> = MutableStateFlow(false).cMutableStateFlow()
+    val areCredentialsWrong: CStateFlow<Boolean> = _areCredentialsWrong.cStateFlow()
 
-    val isButtonEnabled: StateFlow<Boolean> =
+    val isButtonEnabled: CStateFlow<Boolean> =
         combine(isLoading, email, password) { isLoading, email, password ->
             isLoading.not() && email.isNotBlank() && password.isNotBlank()
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, false).cStateFlow()
 
     fun emailUpdate(new: String) {
         _areCredentialsWrong.value = false
@@ -62,7 +66,7 @@ class SignInViewModel: ViewModel(), KoinComponent {
     }
 
     private val _actions = Channel<Action>()
-    val actions: Flow<Action> get() = _actions.receiveAsFlow()
+    val actions: CFlow<Action> get() = _actions.receiveAsFlow().cFlow()
 
     sealed interface Action {
         object LoginSuccess : Action
