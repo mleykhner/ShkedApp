@@ -77,6 +77,7 @@ kotlin {
         homepage = "Link to a Kotlin/Native module homepage"
         ios.deploymentTarget = "15.0"
         podfile = project.file("../iosApp/Podfile")
+        name = "MultiPlatformLibrary"
         framework {
             baseName = "MultiPlatformLibrary"
             linkerOpts += "-ld64"

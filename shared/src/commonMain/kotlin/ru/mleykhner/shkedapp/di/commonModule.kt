@@ -4,12 +4,9 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.http.headers
-import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 import io.realm.kotlin.Realm
-import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import ru.mleykhner.shkedapp.BuildKonfig
@@ -34,12 +31,8 @@ val commonModule = module {
         install(ContentNegotiation) {
             json()
         }
-        install(WebSockets) {
-            contentConverter = KotlinxWebsocketSerializationConverter(Json)
-        }
         install(HttpTimeout) {
             requestTimeoutMillis = 30_000
-            socketTimeoutMillis = 15_000
         }
         install(Auth) {
             bearer {
@@ -59,5 +52,4 @@ val commonModule = module {
             }
         }
     } }
-    //single { logging() }
 }

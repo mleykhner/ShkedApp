@@ -1,5 +1,5 @@
 [versions]
-accompanistSwiperefresh = "0.24.13-rc"
+accompanistSwiperefresh = "0.33.2-alpha"
 activityCompose = "1.8.0"
 agp = "8.1.2"
 buildkonfigGradlePlugin = "0.14.0"
@@ -9,10 +9,11 @@ compose = "1.6.0-alpha07"
 compose-compiler = "1.5.3"
 compose-material3 = "1.1.2"
 ktor = "2.3.4"
-koin = "3.4.3"
+koin = "3.5.0"
 mokoGraphics = "0.9.0"
 mokoMvvm = "0.16.1"
 mokoRes = "0.23.0"
+kswift = "0.6.1"
 nav = "2.7.4"
 serialization = "1.8.21"
 realm = "1.11.0"
@@ -31,6 +32,7 @@ kotlinRealm = { id = "io.realm.kotlin", version.ref = "realm" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 mokoResources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "mokoRes" }
+mokoKSwift = { id = "dev.icerock.moko.kswift", version.ref = "kswift" }
 buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "konfig" }
 
 [libraries]
@@ -63,6 +65,8 @@ napier-lib = { module = "io.github.aakira:napier", version.ref = "napier" }
 moko-resources = { module = "dev.icerock.moko:resources", version.ref = "mokoRes" }
 moko-resources-generator = { module = "dev.icerock.moko:resources-generator", version.ref = "mokoRes" }
 moko-graphics = { module = "dev.icerock.moko:graphics", version.ref = "mokoGraphics" }
+moko-kswift-runtime = { module = "dev.icerock.moko:kswift-runtime", version.ref = "kswift" }
+moko-kswift-gradle = { module = "dev.icerock.moko:kswift-gradle-plugin", version.ref = "kswift" }
 moko-mvvm-core = { module = "dev.icerock.moko:mvvm-core", version.ref = "mokoMvvm" }
 moko-mvvm-flow = { module = "dev.icerock.moko:mvvm-flow", version.ref = "mokoMvvm" }
 moko-mvvm-flow-compose = { module = "dev.icerock.moko:mvvm-flow-compose", version.ref = "mokoMvvm" }
