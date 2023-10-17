@@ -17,8 +17,9 @@ struct MainScreen: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedScreen) {
                 ForEach(tabs, id: \.self) { tab in
-                    Text(tab.name)
-                        .tag(tab.path)
+                    SignInScreen()
+//                    Text(tab.name)
+//                        .tag(tab.path)
                 }
             }.tabViewStyle(.automatic)
             HStack(alignment: .bottom) {
@@ -40,6 +41,7 @@ struct MainScreen: View {
                 }
             }
             .padding([.top], 8)
+            .ignoresSafeArea()
             .background(Material.bar)
             
         }

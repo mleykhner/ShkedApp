@@ -5,6 +5,7 @@ import MultiPlatformLibrary
 struct iOSApp: App {
     
     init() {
+        print("App started")
         HelperKt.doInitKoin()
         StartNapierKt.startNapier()
     }

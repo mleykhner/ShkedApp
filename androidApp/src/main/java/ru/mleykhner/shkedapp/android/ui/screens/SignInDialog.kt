@@ -82,6 +82,9 @@ fun SignInDialog(
     LaunchedEffect(isPresented) {
         if (isPresented) emailFieldFocus.requestFocus()
     }
+    LaunchedEffect(email, password) {
+        viewModel.areCredentialsWrong.value = false
+    }
 
     if (isPresented)
         ModalBottomSheet(
@@ -112,7 +115,7 @@ fun SignInDialog(
                 Spacer(modifier = Modifier.height(18.dp))
                 OutlinedTextField(
                     value = email,
-                    onValueChange = viewModel::emailUpdate,
+                    onValueChange = { viewModel.email.value = it },
                     isError = areCredentialsWrong,
                     label = {
                         Text(
@@ -139,7 +142,7 @@ fun SignInDialog(
                 Spacer(modifier = Modifier.height(6.dp))
                 OutlinedTextField(
                     value = password,
-                    onValueChange = viewModel::passwordUpdate,
+                    onValueChange = { viewModel.password.value = it },
                     isError = areCredentialsWrong,
                     label = {
                         Text(

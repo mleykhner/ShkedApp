@@ -15,6 +15,7 @@
 		AD1485E92AAE26090086455D /* HorizontalInfiniteScrollAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1485E82AAE26090086455D /* HorizontalInfiniteScrollAnimator.swift */; };
 		AD1D55122A8650A2006687CF /* LessonCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D55112A8650A2006687CF /* LessonCard.swift */; };
 		AD1D55142A866F9D006687CF /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D55132A866F9D006687CF /* Typography.swift */; };
+		AD360DD22ADEAA9000F76F13 /* SignInScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD360DD12ADEAA9000F76F13 /* SignInScreen.swift */; };
 		AD4102762AA3B7940059C1A7 /* HorizontalInfiniteScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4102752AA3B7940059C1A7 /* HorizontalInfiniteScroll.swift */; };
 		AD5210952A87AC1000AF9D8F /* MainScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD5210942A87AC1000AF9D8F /* MainScreen.swift */; };
 		AD52109B2A87F6F900AF9D8F /* ScheduleCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD52109A2A87F6F900AF9D8F /* ScheduleCalendar.swift */; };
@@ -52,6 +53,7 @@
 		AD1485E82AAE26090086455D /* HorizontalInfiniteScrollAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalInfiniteScrollAnimator.swift; sourceTree = "<group>"; };
 		AD1D55112A8650A2006687CF /* LessonCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonCard.swift; sourceTree = "<group>"; };
 		AD1D55132A866F9D006687CF /* Typography.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
+		AD360DD12ADEAA9000F76F13 /* SignInScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInScreen.swift; sourceTree = "<group>"; };
 		AD4102752AA3B7940059C1A7 /* HorizontalInfiniteScroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalInfiniteScroll.swift; sourceTree = "<group>"; };
 		AD5210942A87AC1000AF9D8F /* MainScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreen.swift; sourceTree = "<group>"; };
 		AD52109A2A87F6F900AF9D8F /* ScheduleCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCalendar.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 			isa = PBXGroup;
 			children = (
 				AD5210942A87AC1000AF9D8F /* MainScreen.swift */,
+				AD360DD12ADEAA9000F76F13 /* SignInScreen.swift */,
 			);
 			path = screens;
 			sourceTree = "<group>";
@@ -324,6 +327,7 @@
 				AD1D55142A866F9D006687CF /* Typography.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				AD68E4742AB2220700D20409 /* RoundedCorners.swift in Sources */,
+				AD360DD22ADEAA9000F76F13 /* SignInScreen.swift in Sources */,
 				AD5CD3322A8F7CD600B41D64 /* MonthObserver.swift in Sources */,
 				7555FF83242A565900829871 /* AttachmentView.swift in Sources */,
 				AD52109B2A87F6F900AF9D8F /* ScheduleCalendar.swift in Sources */,
