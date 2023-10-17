@@ -1,0 +1,69 @@
+[versions]
+accompanistSwiperefresh = "0.24.13-rc"
+activityCompose = "1.8.0"
+agp = "8.1.2"
+buildkonfigGradlePlugin = "0.14.0"
+constraintlayoutCompose = "1.1.0-alpha13"
+kotlin = "1.9.10"
+compose = "1.6.0-alpha07"
+compose-compiler = "1.5.3"
+compose-material3 = "1.1.2"
+ktor = "2.3.4"
+koin = "3.4.3"
+mokoGraphics = "0.9.0"
+mokoMvvm = "0.16.1"
+mokoRes = "0.23.0"
+nav = "2.7.4"
+serialization = "1.8.21"
+realm = "1.11.0"
+konfig = "0.14.0"
+kvault = "1.12.0"
+napier = "2.6.1"
+datetime = "0.4.1"
+nagigation = "2.7.4"
+
+[plugins]
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serialization" }
+kotlinRealm = { id = "io.realm.kotlin", version.ref = "realm" }
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+mokoResources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "mokoRes" }
+buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "konfig" }
+
+[libraries]
+accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefresh" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+buildkonfig-gradle-plugin = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "buildkonfigGradlePlugin" }
+compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose"}
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose"}
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose"}
+compose-ui-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
+compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
+constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
+gradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "nav" }
+realm-base = { module = "io.realm.kotlin:library-base", version.ref = "realm" }
+kvault-lib = { module = "com.liftric:kvault", version.ref = "kvault" }
+napier-lib = { module = "io.github.aakira:napier", version.ref = "napier" }
+moko-resources = { module = "dev.icerock.moko:resources", version.ref = "mokoRes" }
+moko-resources-generator = { module = "dev.icerock.moko:resources-generator", version.ref = "mokoRes" }
+moko-graphics = { module = "dev.icerock.moko:graphics", version.ref = "mokoGraphics" }
+moko-mvvm-core = { module = "dev.icerock.moko:mvvm-core", version.ref = "mokoMvvm" }
+moko-mvvm-flow = { module = "dev.icerock.moko:mvvm-flow", version.ref = "mokoMvvm" }
+moko-mvvm-flow-compose = { module = "dev.icerock.moko:mvvm-flow-compose", version.ref = "mokoMvvm" }
+resources-generator = { module = "dev.icerock.moko:resources-generator", version.ref = "mokoRes" }

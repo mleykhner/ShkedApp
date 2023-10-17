@@ -7,8 +7,7 @@
 //
 
 import SwiftUI
-import shared
-
+import MultiPlatformLibrary
 
 struct MainScreen: View {
 
