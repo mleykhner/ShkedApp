@@ -12,20 +12,20 @@ import MultiPlatformLibrary
 import MultiPlatformLibrarySwift
 
 struct SignInScreen: View {
-    
+
     private let sr = SharedRes.strings()
     private enum Field: Hashable {
         case usernameField
         case passwordField
     }
-    
+
     @ObservedObject private var viewModel: SignInViewModel = SignInViewModel()
     @FocusState private var focusedField: Field?
-    
+
     init(onDismiss: () -> Void, onSignUpRequested: () -> Void) {
         focusedField = .usernameField
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             Text(Strings().get(id: sr.auth_screen_heading, args: []))
@@ -45,7 +45,7 @@ struct SignInScreen: View {
                     }
                     .padding(16)
                     .overlay { RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(Color.gray, lineWidth: 2)}
-                    
+
                 SecureField(Strings().get(id: sr.password, args: []), text: viewModel.binding(\.password))
                     .font(golosFontFamily.regular(size: 16))
                     .textContentType(.password)
