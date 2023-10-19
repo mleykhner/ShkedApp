@@ -7,7 +7,8 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.kotlinRealm)
-    id(libs.plugins.mokoResources.get().pluginId).apply(true)
+    id(libs.plugins.mokoKSwift.get().pluginId)
+    id(libs.plugins.mokoResources.get().pluginId)
     id(libs.plugins.buildKonfig.get().pluginId)
 }
 
@@ -41,6 +42,7 @@ kotlin {
                 api(libs.moko.resources)
                 api(libs.moko.mvvm.core)
                 api(libs.moko.mvvm.flow)
+                api(libs.moko.kswift.runtime)
             }
         }
 
@@ -104,6 +106,12 @@ multiplatformResources {
 
 val properties = Properties()
 properties.load(project.rootProject.file("local.properties").inputStream())
+
+kswift {
+    projectPodspecName.set("MultiPlatformLibrary")
+    install(dev.icerock.moko.kswift.plugin.feature.SealedToSwiftEnumFeature)
+    includeLibrary("shared")
+}
 
 buildkonfig {
     packageName = "ru.mleykhner.shkedapp"

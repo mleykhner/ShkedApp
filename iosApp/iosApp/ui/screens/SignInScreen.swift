@@ -9,7 +9,7 @@
 import SwiftUI
 import mokoMvvmFlowSwiftUI
 import MultiPlatformLibrary
-//import MultiPlatformLibrarySwift
+import MultiPlatformLibrarySwift
 
 struct SignInScreen: View {
     
@@ -70,14 +70,14 @@ struct SignInScreen: View {
             }
         }
         .padding(20)
-//        .onReceive(createPublisher(viewModel.actions)) { action in
-//            let actionKs = SignInViewModelActionKs(action)
-//            switch(actionKs) {
-//            case .loginSuccess:
-//                print("Success")
-//                break
-//            }
-//        }
+        .onReceive(createPublisher(viewModel.actions)) { action in
+            let actionKs = SignInViewModelActionKs(action)
+            switch(actionKs) {
+            case .loginSuccess:
+                print("Success")
+                break
+            }
+        }
     }
 }
 

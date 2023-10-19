@@ -1,8 +1,19 @@
+source 'https://cdn.cocoapods.org'
+ENV['SWIFT_VERSION'] = '5.9'
 inhibit_all_warnings!
 install! 'cocoapods', :disable_input_output_paths => true
+use_frameworks!
 target 'iosApp' do
-  use_frameworks!
   platform :ios, '15.0'
   pod 'MultiPlatformLibrary', :path => '../shared'
+  pod 'MultiPlatformLibrarySwift', :path => '../shared'
   pod 'mokoMvvmFlowSwiftUI', :podspec => 'https://raw.githubusercontent.com/icerockdev/moko-mvvm/release/0.16.1/mokoMvvmFlowSwiftUI.podspec'
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+    end
+  end
 end
