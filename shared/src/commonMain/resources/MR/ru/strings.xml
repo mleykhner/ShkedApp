@@ -37,8 +37,8 @@
     <string name="sign_up_verb">Зарегистрироваться</string>
     <string name="sign_in_noun">Вход</string>
     <string name="sign_up_noun">Регистрация</string>
-    <string name="auth_screen_heading">Кто ты?</string>
-    <string name="auth_screen_description">Авторизуйся, чтобы смотреть задания к парам и оставлять свои</string>
+    <string name="auth_screen_heading">Давай знакомиться!</string>
+    <string name="auth_screen_description">Чтобы добавлять и просматривать задания нужно авторизоваться</string>
     <string name="email">Электропочта</string>
     <string name="password">Пароль</string>
     <string name="show_password">Показать пароль</string>

@@ -17,11 +17,10 @@ struct MainScreen: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedScreen) {
                 ForEach(tabs, id: \.self) { tab in
-                    SignInScreen(onDismiss: {}, onSignUpRequested: {})
-//                    Text(tab.name)
-//                        .tag(tab.path)
+                    Text(tab.name).tag(tab.path)
                 }
-            }.tabViewStyle(.automatic)
+            }
+            .tabViewStyle(.automatic)
             HStack(alignment: .bottom) {
                 Spacer()
                 ForEach(tabs, id: \.self) { tab in

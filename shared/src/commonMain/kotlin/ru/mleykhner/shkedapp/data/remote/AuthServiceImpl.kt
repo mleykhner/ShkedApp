@@ -8,7 +8,6 @@ import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
-import io.ktor.client.request.headers
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpHeaders
@@ -183,6 +182,10 @@ class AuthServiceImpl: AuthService, KoinComponent {
             }
         }
         return AuthResult.FAILED
+    }
+
+    override suspend fun checkProfileState(email: String): ProfileState {
+        TODO("Not yet implemented")
     }
 }
 

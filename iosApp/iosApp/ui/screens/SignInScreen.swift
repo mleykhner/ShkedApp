@@ -21,17 +21,24 @@ struct SignInScreen: View {
 
     @ObservedObject private var viewModel: SignInViewModel = SignInViewModel()
     @FocusState private var focusedField: Field?
+    @State private var onDismiss: () -> Void
+    @State private var onSignUpRequested: () -> Void
 
-    init(onDismiss: () -> Void, onSignUpRequested: () -> Void) {
+    init(onDismiss: @escaping () -> Void, onSignUpRequested: @escaping () -> Void) {
+        self.onDismiss = onDismiss
+        self.onSignUpRequested = onSignUpRequested
         focusedField = .usernameField
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading) {
             Text(Strings().get(id: sr.auth_screen_heading, args: []))
                 .font(unboundedFontFamily.bold(size: 24))
+            Spacer().frame(height: 10)
             Text(Strings().get(id: sr.auth_screen_description, args: []))
                 .font(golosFontFamily.regular(size: 16))
+                .frame(width: 300, alignment: .leading)
+            Spacer().frame(height: 32)
             VStack (spacing: 8) {
                 TextField(Strings().get(id: sr.email, args: []), text: viewModel.binding(\.email))
                     .font(golosFontFamily.regular(size: 16))
@@ -54,6 +61,7 @@ struct SignInScreen: View {
                     .padding(16)
                     .overlay { RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(Color.gray, lineWidth: 2)}
             }
+            Spacer().frame(height: 18)
             HStack {
                 Button(Strings().get(id: sr.sign_in_verb, args: []), action: viewModel.onLoginPressed)
                     .font(golosFontFamily.regular(size: 16))
@@ -75,7 +83,10 @@ struct SignInScreen: View {
             switch(actionKs) {
             case .loginSuccess:
                 print("Success")
+                onDismiss()
                 break
+            @unknown default:
+                fatalError()
             }
         }
     }
