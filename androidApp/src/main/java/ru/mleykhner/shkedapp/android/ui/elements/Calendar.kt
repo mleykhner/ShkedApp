@@ -26,8 +26,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.ArrowForward
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
@@ -116,12 +116,6 @@ fun CalendarControls(state: SheetValue) {
             .readBytes()
             .decodeToString()
     }
-    val sheetMotionScene = remember {
-        context.resources
-            .openRawResource(R.raw.calendar_bottom_sheet_transition)
-            .readBytes()
-            .decodeToString()
-    }
     val weekdaysNames = remember {
         getShortWeekdaysSymbols()
     }
@@ -167,14 +161,14 @@ fun CalendarControls(state: SheetValue) {
                 modifier = Modifier
                     .layoutId("nextButton")
             ) {
-                Icon(Icons.Rounded.ArrowForward, contentDescription = null)
+                Icon(Icons.AutoMirrored.Rounded.ArrowForward, contentDescription = null)
             }
             FilledTonalIconButton(
                 onClick = { /*TODO*/ },
                 modifier = Modifier
                     .layoutId("previousButton")
             ) {
-                Icon(Icons.Rounded.ArrowBack, contentDescription = null)
+                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null)
             }
         }
         WeekObserver(selectedDate) {

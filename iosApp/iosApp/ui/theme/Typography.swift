@@ -1,5 +1,5 @@
 import SwiftUI
-import shared
+import MultiPlatformLibrary
 
 
 let labelMediumStyle = Font(SharedRes.fontsUnbounded.shared.medium.uiFont(withSize: 12))

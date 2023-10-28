@@ -1,17 +1,18 @@
-
 plugins {
-    id("com.android.application").version("8.1.0").apply(false)
-    id("com.android.library").version("8.1.0").apply(false)
-    id("org.jetbrains.kotlin.plugin.serialization").version("1.8.21")
-    kotlin("android").version("1.8.21").apply(false)
-    kotlin("multiplatform").version("1.8.21").apply(false)
-    //id("dev.icerock.moko:resources-generator").version("0.23.0").apply(true)
+    alias(libs.plugins.androidApplication).apply(false)
+    alias(libs.plugins.androidLibrary).apply(false)
+    alias(libs.plugins.kotlinSerialization).apply(false)
+    alias(libs.plugins.kotlinAndroid).apply(false)
+    alias(libs.plugins.kotlinMultiplatform).apply(false)
+    alias(libs.plugins.kotlinCocoapods).apply(false)
 }
 
 buildscript {
     dependencies {
-        classpath("dev.icerock.moko:resources-generator:0.23.0")
-        classpath("com.codingfeline.buildkonfig:buildkonfig-gradle-plugin:0.14.0")
+        classpath(libs.moko.resources.generator)
+        classpath(libs.buildkonfig.gradle.plugin)
+        classpath(libs.moko.kswift.gradle)
+        classpath(libs.gradle)
     }
 }
 

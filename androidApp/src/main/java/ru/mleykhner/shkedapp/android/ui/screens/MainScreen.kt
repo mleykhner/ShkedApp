@@ -75,14 +75,18 @@ fun MainScreen() {
         }
     ) { scaffoldPadding ->
         NavHost(navController, startDestination = Screen.Schedule.route, modifier = Modifier.padding(scaffoldPadding)) {
-            composable(Screen.News.route) { Text(Screen.News.route) }
+            composable(Screen.News.route) { Button(onClick = { authScreenPresented = true }) {
+                Text(text = "SignIn")
+            } }
             composable(Screen.Schedule.route) { ScheduleScreen() }
             composable(Screen.Tasks.route) { Text(Screen.Tasks.route) }
         }
     }
-    AuthScreen(
+    SignInDialog(
         isPresented = authScreenPresented,
-        onDismiss = { authScreenPresented = false })
+        onDismiss = { authScreenPresented = false },
+        onSignUpRequested = {}
+    )
 }
 
 @Preview(

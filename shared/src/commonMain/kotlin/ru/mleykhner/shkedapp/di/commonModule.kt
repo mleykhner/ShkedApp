@@ -4,13 +4,12 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.websocket.WebSockets
-import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
+import io.ktor.http.headers
 import io.ktor.serialization.kotlinx.json.json
 import io.realm.kotlin.Realm
-import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
+import ru.mleykhner.shkedapp.BuildKonfig
 import ru.mleykhner.shkedapp.data.remote.AuthService
 import ru.mleykhner.shkedapp.data.remote.AuthServiceImpl
 import ru.mleykhner.shkedapp.data.remote.TokensService
@@ -24,22 +23,16 @@ val commonModule = module {
     singleOf<TokensService>(::TokensServiceImpl)
     single { Realm.open(realmConfig) }
     single { httpClient {
-        install(ContentNegotiation) {
-            json(
-//                Json {
-//                    serializersModule = SerializersModule {
-//                        contextual(List<LocalDate>::class, ListSerializer(LocalDateIso8601Serializer))
-//                        contextual(LocalDate::class, LocalDateIso8601Serializer)
-//                    }
-//                }
-            )
+        engine {
+            headers {
+                append("X-Api-Key", BuildKonfig.apiKey)
+            }
         }
-        install(WebSockets) {
-            contentConverter = KotlinxWebsocketSerializationConverter(Json)
+        install(ContentNegotiation) {
+            json()
         }
         install(HttpTimeout) {
             requestTimeoutMillis = 30_000
-            socketTimeoutMillis = 15_000
         }
         install(Auth) {
             bearer {
@@ -59,5 +52,4 @@ val commonModule = module {
             }
         }
     } }
-    //single { logging() }
 }

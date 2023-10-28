@@ -1,10 +1,11 @@
 import SwiftUI
-import shared
+import MultiPlatformLibrary
 
 @main
 struct iOSApp: App {
     
     init() {
+        print("App started")
         HelperKt.doInitKoin()
         StartNapierKt.startNapier()
     }

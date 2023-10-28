@@ -7,8 +7,7 @@
 //
 
 import SwiftUI
-import shared
-
+import MultiPlatformLibrary
 
 struct MainScreen: View {
 
@@ -18,10 +17,10 @@ struct MainScreen: View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedScreen) {
                 ForEach(tabs, id: \.self) { tab in
-                    Text(tab.name)
-                        .tag(tab.path)
+                    Text(tab.name).tag(tab.path)
                 }
-            }.tabViewStyle(.automatic)
+            }
+            .tabViewStyle(.automatic)
             HStack(alignment: .bottom) {
                 Spacer()
                 ForEach(tabs, id: \.self) { tab in
@@ -41,8 +40,8 @@ struct MainScreen: View {
                 }
             }
             .padding([.top], 8)
-            .background(Color("primaryContainer").opacity(0.5))
-            .background(Material.ultraThin)
+            .ignoresSafeArea()
+            .background(Material.bar)
             
         }
     }

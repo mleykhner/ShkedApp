@@ -2,12 +2,14 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.kotlin.konan.properties.Properties
 
 plugins {
-    kotlin("multiplatform")
-    kotlin("plugin.serialization") version "1.8.21"
-    id("com.android.library")
-    id("io.realm.kotlin") version "1.10.0"
-    id("dev.icerock.mobile.multiplatform-resources")
-    id("com.codingfeline.buildkonfig")
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinCocoapods)
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.kotlinRealm)
+    id(libs.plugins.mokoKSwift.get().pluginId)
+    id(libs.plugins.mokoResources.get().pluginId)
+    id(libs.plugins.buildKonfig.get().pluginId)
 }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
@@ -21,72 +23,77 @@ kotlin {
             }
         }
     }
-    
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "shared"
-            linkerOpts += "-ld64"
-            export("dev.icerock.moko:resources:0.23.0")
-            export("dev.icerock.moko:graphics:0.9.0")
-        }
-    }
-
-    val ktorVersion = "2.3.4"
-    val koinVersion = "3.4.3"
-    val realmVersion = "1.10.0"
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-core:$ktorVersion")
-                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-                implementation("io.ktor:ktor-client-websockets:$ktorVersion")
-                implementation("io.ktor:ktor-client-auth:$ktorVersion")
-                implementation("io.insert-koin:koin-core:$koinVersion")
-                implementation("io.realm.kotlin:library-base:$realmVersion")
-                implementation("com.liftric:kvault:1.10.0")
-                implementation("io.github.aakira:napier:2.6.1")
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
-                api("org.lighthousegames:logging:1.3.0")
-                api("dev.icerock.moko:resources:0.23.0")
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.serialization.kotlinx.json)
+                implementation(libs.ktor.client.auth)
+                implementation(libs.koin.core)
+                implementation(libs.realm.base)
+                implementation(libs.kvault.lib)
+                implementation(libs.napier.lib)
+                implementation(libs.kotlinx.datetime)
+                api(libs.moko.resources)
+                api(libs.moko.mvvm.core)
+                api(libs.moko.mvvm.flow)
+                api(libs.moko.kswift.runtime)
             }
         }
 
         val androidMain by getting {
             dependencies {
                 dependsOn(commonMain)
-                implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
-                implementation("io.insert-koin:koin-android:$koinVersion")
+                implementation(libs.ktor.client.okhttp)
+                implementation(libs.koin.android)
+                api(libs.moko.mvvm.flow.compose)
             }
         }
 
         val iosMain by getting {
             dependencies {
                 dependsOn(commonMain)
-                implementation("io.ktor:ktor-client-darwin:$ktorVersion")
+                implementation(libs.ktor.client.darwin)
             }
         }
 
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
-                implementation("io.insert-koin:koin-test:$koinVersion")
-                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-                implementation("io.ktor:ktor-client-mock:$ktorVersion")
+                implementation(libs.koin.test)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.serialization.kotlinx.json)
+                implementation(libs.ktor.client.mock)
             }
+        }
+    }
+
+    cocoapods {
+        version = "1.0"
+        summary = "Some description for a Kotlin/Native module"
+        homepage = "Link to a Kotlin/Native module homepage"
+        ios.deploymentTarget = "15.0"
+        podfile = project.file("../iosApp/Podfile")
+        name = "MultiPlatformLibrary"
+        framework {
+            baseName = "MultiPlatformLibrary"
+            linkerOpts += "-ld64"
+            export(libs.moko.mvvm.core)
+            export(libs.moko.mvvm.flow)
+            export(libs.moko.resources)
+            export(libs.moko.graphics)
         }
     }
 }
 
 android {
     namespace = "ru.mleykhner.shkedapp"
-    compileSdk = 33
+    compileSdk = 34
     buildFeatures {
         buildConfig = true
     }
@@ -99,6 +106,12 @@ multiplatformResources {
 
 val properties = Properties()
 properties.load(project.rootProject.file("local.properties").inputStream())
+
+kswift {
+    projectPodspecName.set("MultiPlatformLibrary")
+    install(dev.icerock.moko.kswift.plugin.feature.SealedToSwiftEnumFeature)
+    includeLibrary("shared")
+}
 
 buildkonfig {
     packageName = "ru.mleykhner.shkedapp"

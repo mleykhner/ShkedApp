@@ -9,4 +9,11 @@ interface AuthService {
     suspend fun refresh(): AuthResult
     suspend fun logout(): AuthResult
     suspend fun logoutFromAll(): AuthResult
+    suspend fun checkProfileState(email: String): ProfileState
+}
+
+sealed interface ProfileState {
+    object Password : ProfileState
+    object Passkey : ProfileState
+    object NotRegistered : ProfileState
 }

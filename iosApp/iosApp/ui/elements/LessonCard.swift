@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import shared
+import MultiPlatformLibrary
 
 struct LessonCard: View {
     
