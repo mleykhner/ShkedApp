@@ -33,6 +33,12 @@ val labelMediumStyle = TextStyle(
     fontWeight = FontWeight.Medium
 )
 
+val titleLargeStyle = TextStyle(
+    fontFamily = unboundedFontFamily,
+    fontSize = 24.sp,
+    fontWeight = FontWeight.Bold
+)
+
 val titleMediumStyle = TextStyle(
     fontFamily = unboundedFontFamily,
     fontSize = 20.sp,
@@ -51,6 +57,12 @@ val weekdaysStyle = TextStyle(
     fontWeight = FontWeight.SemiBold
 )
 
+val labelLargeStyle = TextStyle(
+    fontFamily = golosFontFamily,
+    fontSize = 20.sp,
+    fontWeight = FontWeight.Medium
+)
+
 val labelSmallStyle = TextStyle(
     fontFamily = golosFontFamily,
     fontSize = 12.sp,
@@ -63,8 +75,20 @@ val bodyMediumStyle = TextStyle(
     fontWeight = FontWeight.Normal
 )
 
+val bodySmallStyle = TextStyle(
+    fontFamily = golosFontFamily,
+    fontSize = 11.sp,
+    fontWeight = FontWeight.Normal
+)
+
 val bodyLargeStyle = TextStyle(
     fontFamily = golosFontFamily,
     fontSize = 16.sp,
     fontWeight = FontWeight.Normal
+)
+
+val errorTextStyle = TextStyle(
+    fontFamily = golosFontFamily,
+    fontSize = 12.sp,
+    fontWeight = FontWeight.Medium
 )
