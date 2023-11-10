@@ -17,7 +17,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
     packaging {
         resources {
@@ -51,5 +51,7 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.constraintlayout.compose)
     implementation(libs.kotlinx.datetime)
-    implementation(libs.accompanist.swiperefresh)
+    implementation(libs.pullrefresh)
+    implementation(libs.compose.markdown)
+    implementation(libs.material3.android)
 }

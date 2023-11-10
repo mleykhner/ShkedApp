@@ -1,12 +1,13 @@
 package ru.mleykhner.shkedapp.android.ui.screens
 
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -14,8 +15,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,15 +30,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -46,65 +52,101 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import dev.icerock.moko.mvvm.flow.compose.collectAsMutableState
+import dev.icerock.moko.mvvm.flow.compose.observeAsActions
+import dev.icerock.moko.resources.format
+import dev.jeziellago.compose.markdowntext.MarkdownText
+import ru.mleykhner.shared_resources.SharedRes
 import ru.mleykhner.shkedapp.android.R
 import ru.mleykhner.shkedapp.android.ui.theme.AppTheme
 import ru.mleykhner.shkedapp.android.ui.theme.errorTextStyle
+import ru.mleykhner.shkedapp.utils.Strings
+import ru.mleykhner.shkedapp.vm.AuthViewModel
 
 @Composable
 fun AuthSheet(
-    //viewModel: AuthViewModel = viewModel()
+    viewModel: AuthViewModel = viewModel(),
+    onDismiss: () -> Unit = {}
 ) {
     val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-    var password by remember {
-        mutableStateOf("")
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val isNextButtonEmailOrPhoneAvailable by viewModel.isNextButtonEmailOrPhoneAvailable.collectAsState()
+    val hasError by viewModel.hasError.collectAsState()
+
+    var emailOrPhone by viewModel.emailOrPhone.collectAsMutableState()
+    val password by viewModel.password.collectAsState()
+
+    viewModel.actions.observeAsActions { action ->
+        when (action) {
+            AuthViewModel.Action.LoginSuccess -> onDismiss()
+        }
     }
 
-    Column(
+    Surface(
+        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         modifier = Modifier
-            .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .fillMaxWidth()
+            .imePadding()
+            .fillMaxWidth(),
+        shadowElevation = 4.dp,
+        tonalElevation = 4.dp
     ) {
-        if (navBackStackEntry?.destination?.hasRoute("emailOrPhone", null) == false) {
-            IconButton(
-                onClick = { navController.popBackStack() },
-                modifier = Modifier.padding(start = 8.dp, top = 8.dp)
+        Column {
+            Crossfade(
+                targetState = (
+                        navBackStackEntry?.destination?.hasRoute(
+                            AuthStep.EMAIL_OR_PHONE.name, null) == false
+                        ),
+                label = "BackButton"
+            ) { hidden ->
+                when (hidden) {
+                    false -> Box(modifier = Modifier.height(16.dp))
+                    true -> IconButton(
+                        onClick = { navController.popBackStack() },
+                        modifier = Modifier.padding(start = 8.dp, top = 8.dp)
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+            }
+
+            NavHost(
+                navController,
+                startDestination = AuthStep.EMAIL_OR_PHONE.name,
+                enterTransition = { slideInHorizontally() },
+                exitTransition = { fadeOut() }
             ) {
-                Icon(
-                    Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        } else {
-            Box(modifier = Modifier.height(16.dp))
-        }
-        NavHost(
-            navController,
-            startDestination = "registrationStart",
-            modifier = Modifier
-                .padding(horizontal = 20.dp)
-                .padding(bottom = 12.dp)
-        ) {
-            composable("emailOrPhone") {
-                EmailOrPhoneStepPage(
-                    emailOrPhone = "",
-                    isNextEnabled = true,
-                    onChange = {},
-                    onNextPressed = { navController.navigate("registrationStart") }
-                )
-            }
-            composable("password") {
-                PasswordStepPage(password, {}, "mleykhner",true, {}, false)
-            }
-            composable("registrationStart") {
-                RegistrationStart("mleykhner", onNextPressed = {})
+                composable(AuthStep.EMAIL_OR_PHONE.name) {
+                    EmailOrPhoneStepPage(
+                        emailOrPhone = emailOrPhone,
+                        isNextEnabled = isNextButtonEmailOrPhoneAvailable,
+                        onChange = { emailOrPhone = it },
+                        // TODO: Добавить проверку почты
+                        onNextPressed = { navController.navigate(AuthStep.PASSWORD.name) }
+                    )
+                }
+                composable(AuthStep.PASSWORD.name) {
+                    PasswordStepPage(
+                        password = password,
+                        onPasswordChange = viewModel::updatePassword,
+                        emailOrPhone = emailOrPhone,
+                        isNextEnabled = password.isNotBlank(),
+                        onNextPressed = viewModel::signInWithPassword,
+                        isError = hasError
+                    )
+                }
+                composable(AuthStep.REG_START.name) {
+                    RegistrationStart(emailOrPhone, onNextPressed = {})
+                }
             }
         }
     }
@@ -118,15 +160,23 @@ fun EmailOrPhoneStepPage(
     onChange: (String) -> Unit,
     onNextPressed: () -> Unit
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(18.dp),
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp))
+            .padding(horizontal = 20.dp)
+            .padding(bottom = 12.dp)
+    ) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
-                "Давай знакомиться!",
+                Strings(LocalContext.current)
+                    .get(SharedRes.strings.email_or_phone_step_page_heading, emptyList()),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                "Чтобы добавлять и просматривать задания нужно авторизоваться",
+                Strings(LocalContext.current)
+                    .get(SharedRes.strings.email_or_phone_step_page_description, emptyList()),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -136,7 +186,13 @@ fun EmailOrPhoneStepPage(
                 OutlinedTextField(
                     value = emailOrPhone,
                     onValueChange = onChange,
-                    label = { Text("Почта", style = MaterialTheme.typography.bodyLarge) },
+                    label = {
+                        Text(
+                            Strings(LocalContext.current)
+                                .get(SharedRes.strings.email_or_phone, emptyList()),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                            },
                     textStyle = MaterialTheme.typography.bodyLarge,
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.None,
@@ -154,16 +210,22 @@ fun EmailOrPhoneStepPage(
                         .fillMaxWidth()
                 ) {
                     Text(
-                        "Продолжить",
+                        Strings(LocalContext.current)
+                            .get(SharedRes.strings.continue_button, emptyList()),
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
             }
-            Text(
-                "Нажимая <<Продолжить>>, Вы принимаете политику конфиденциальности и пользовательское соглашение",
+            val source = SharedRes.strings.legal_text.format(
+                Strings(LocalContext.current)
+                    .get(SharedRes.strings.continue_button, emptyList())
+            ).toString(LocalContext.current)
+            MarkdownText(
+                markdown = source,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.secondary,
+                linkColor = MaterialTheme.colorScheme.secondary
             )
         }
 
@@ -183,18 +245,24 @@ fun PasswordStepPage(
         mutableStateOf(false)
     }
     Column(
-        verticalArrangement = Arrangement.spacedBy(18.dp)
+        verticalArrangement = Arrangement.spacedBy(18.dp),
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp))
+            .padding(horizontal = 20.dp)
+            .padding(bottom = 12.dp)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                "Последний шаг",
+                Strings(LocalContext.current)
+                    .get(SharedRes.strings.password_step_page_heading, emptyList()),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                "Осталось только ввести пароль",
+                Strings(LocalContext.current)
+                    .get(SharedRes.strings.password_step_page_description, emptyList()),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -228,7 +296,13 @@ fun PasswordStepPage(
                     OutlinedTextField(
                         value = password,
                         onValueChange = onPasswordChange,
-                        label = { Text("Пароль", style = MaterialTheme.typography.bodyLarge) },
+                        label = {
+                            Text(
+                                Strings(LocalContext.current)
+                                    .get(SharedRes.strings.password, emptyList()),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                                },
                         textStyle = MaterialTheme.typography.bodyLarge,
                         visualTransformation = if (showPassword)
                             VisualTransformation.None
@@ -236,11 +310,22 @@ fun PasswordStepPage(
                         isError = isError,
                         trailingIcon = {
                             IconButton(onClick = { showPassword = !showPassword }) {
-                                Crossfade(targetState = showPassword, label = "IconCrossFade") { show ->
+                                Crossfade(
+                                    targetState = showPassword,
+                                    label = "IconCrossFade"
+                                ) { show ->
                                     if (show) {
-                                        Icon(painterResource(id = R.drawable.visibility_off), contentDescription = null)
+                                        Icon(
+                                            painterResource(id = R.drawable.visibility_off),
+                                            contentDescription = Strings(LocalContext.current)
+                                                .get(SharedRes.strings.hide_password, emptyList())
+                                        )
                                     } else {
-                                        Icon(painterResource(id = R.drawable.visibility), contentDescription = null)
+                                        Icon(
+                                            painterResource(id = R.drawable.visibility),
+                                            contentDescription = Strings(LocalContext.current)
+                                                .get(SharedRes.strings.show_password, emptyList())
+                                        )
                                     }
                                 }
                             }
@@ -260,7 +345,8 @@ fun PasswordStepPage(
                         label = "ErrorTextVisibility"
                     ) {
                         Text(
-                            text = "Пароль не подходит",
+                            text = Strings(LocalContext.current)
+                                .get(SharedRes.strings.wrong_password, emptyList()),
                             style = errorTextStyle,
                             color = MaterialTheme.colorScheme.error
                         )
@@ -274,13 +360,14 @@ fun PasswordStepPage(
                         .fillMaxWidth()
                 ) {
                     Text(
-                        "Продолжить",
+                        Strings(LocalContext.current)
+                            .get(SharedRes.strings.continue_button, emptyList()),
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
             }
             Text(
-                "Не получается войти?",
+                Strings(LocalContext.current).get(SharedRes.strings.cant_sign_in, emptyList()),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.secondary
             )
@@ -291,18 +378,24 @@ fun PasswordStepPage(
 @Composable
 fun RegistrationStart(emailOrPhone: String, onNextPressed: () -> Unit) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(18.dp)
+        verticalArrangement = Arrangement.spacedBy(18.dp),
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp))
+            .padding(horizontal = 20.dp)
+            .padding(bottom = 12.dp),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                "Похоже, ты впервые здесь",
+                Strings(LocalContext.current)
+                    .get(SharedRes.strings.registration_step_page_heading, emptyList()),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                "Расскажи немного о себе",
+                Strings(LocalContext.current)
+                    .get(SharedRes.strings.registration_step_page_description, emptyList()),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -336,25 +429,45 @@ fun RegistrationStart(emailOrPhone: String, onNextPressed: () -> Unit) {
                         .fillMaxWidth()
                 ) {
                     Text(
-                        "Продолжить регистрацию",
+                        Strings(LocalContext.current)
+                            .get(SharedRes.strings.continue_registration, emptyList()),
                         style = MaterialTheme.typography.titleMedium.copy(fontSize = 14.sp)
                     )
                 }
             }
-            Text(
-                "Нажимая <<Продолжить>>, Вы принимаете политику конфиденциальности и пользовательское соглашение",
+            val source = SharedRes.strings.legal_text.format(
+                Strings(LocalContext.current)
+                    .get(SharedRes.strings.continue_registration, emptyList())
+            ).toString(LocalContext.current)
+            MarkdownText(
+                markdown = source,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.secondary,
+                linkColor = MaterialTheme.colorScheme.secondary
             )
         }
     }
 }
 
-@Preview(widthDp = 360, showBackground = true, uiMode = UI_MODE_NIGHT_NO)
+enum class AuthStep {
+    EMAIL_OR_PHONE, PASSWORD, PASSKEY, REG_START, REG_NAME, REG_PASSWORD, FINISH
+}
+
+@Preview(
+    widthDp = 360,
+    showBackground = true,
+    uiMode = UI_MODE_NIGHT_YES,
+    locale = "ru"
+)
 @Composable
 fun AuthSheet_Preview() {
     AppTheme {
-        AuthSheet()
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            AuthSheet()
+        }
     }
 }

@@ -10,6 +10,8 @@ import io.realm.kotlin.Realm
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import ru.mleykhner.shkedapp.BuildKonfig
+import ru.mleykhner.shkedapp.data.ScheduleService
+import ru.mleykhner.shkedapp.data.ScheduleServiceImpl
 import ru.mleykhner.shkedapp.data.remote.AuthService
 import ru.mleykhner.shkedapp.data.remote.AuthServiceImpl
 import ru.mleykhner.shkedapp.data.remote.TokensService
@@ -21,6 +23,7 @@ import ru.mleykhner.shkedapp.utils.realmConfig
 val commonModule = module {
     singleOf<AuthService>(::AuthServiceImpl)
     singleOf<TokensService>(::TokensServiceImpl)
+    singleOf<ScheduleService>(::ScheduleServiceImpl)
     single { Realm.open(realmConfig) }
     single { httpClient {
         engine {

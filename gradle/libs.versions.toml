@@ -1,27 +1,27 @@
 [versions]
-accompanistSwiperefresh = "0.33.2-alpha"
 activityCompose = "1.8.0"
-agp = "8.1.2"
+agp = "8.1.3"
 buildkonfigGradlePlugin = "0.14.0"
-constraintlayoutCompose = "1.1.0-alpha13"
+constraintlayoutCompose = "1.0.1"
 kotlin = "1.9.10"
-compose = "1.6.0-alpha07"
-compose-compiler = "1.5.3"
-compose-material3 = "1.1.2"
+compose = "1.5.4"
+composeCompiler = "1.5.3"
+composeMaterial3 = "1.2.0-alpha10"
 ktor = "2.3.4"
 koin = "3.5.0"
 mokoGraphics = "0.9.0"
 mokoMvvm = "0.16.1"
 mokoRes = "0.23.0"
 kswift = "0.6.1"
-nav = "2.7.4"
+nav = "2.7.5"
 serialization = "1.8.21"
 realm = "1.11.0"
 konfig = "0.14.0"
 kvault = "1.12.0"
 napier = "2.6.1"
 datetime = "0.4.1"
-nagigation = "2.7.4"
+markdown = "0.3.6"
+pullRefresh = "1.0.0"
 
 [plugins]
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -36,13 +36,12 @@ mokoKSwift = { id = "dev.icerock.moko.kswift", version.ref = "kswift" }
 buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "konfig" }
 
 [libraries]
-accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefresh" }
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 buildkonfig-gradle-plugin = { module = "com.codingfeline.buildkonfig:buildkonfig-gradle-plugin", version.ref = "buildkonfigGradlePlugin" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose"}
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose"}
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose"}
-compose-ui-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
+compose-ui-material3 = { module = "androidx.compose.material3:material3", version.ref = "composeMaterial3" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 gradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -71,3 +70,6 @@ moko-mvvm-core = { module = "dev.icerock.moko:mvvm-core", version.ref = "mokoMvv
 moko-mvvm-flow = { module = "dev.icerock.moko:mvvm-flow", version.ref = "mokoMvvm" }
 moko-mvvm-flow-compose = { module = "dev.icerock.moko:mvvm-flow-compose", version.ref = "mokoMvvm" }
 resources-generator = { module = "dev.icerock.moko:resources-generator", version.ref = "mokoRes" }
+compose-markdown = { module = "com.github.jeziellago:compose-markdown", version.ref = "markdown" }
+pullrefresh = { module = "eu.bambooapps:compose-material3-pullrefresh", version.ref = "pullRefresh" }
+material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "composeMaterial3" }

@@ -4,6 +4,7 @@ package ru.mleykhner.shkedapp.android.ui.elements
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,18 +38,29 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.icerock.moko.mvvm.flow.compose.observeAsActions
+import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.todayIn
+import kotlinx.datetime.until
 import ru.mleykhner.shkedapp.android.ui.theme.AppTheme
 import ru.mleykhner.shkedapp.android.ui.theme.weekdaysStyle
+import ru.mleykhner.shkedapp.vm.ScheduleScreenViewModel
 import java.text.DateFormatSymbols
-import java.time.LocalDate
-import java.time.Month
-import java.time.temporal.ChronoUnit
 import java.util.Collections
+
+private const val DATE_SIZE = 46f
+private const val GAP_WIDTH = 12f
 
 @Composable
 fun Timeline(
     modifier: Modifier = Modifier,
-    initialDate: LocalDate,
+    viewModel: ScheduleScreenViewModel,
     selectedDate: LocalDate,
     onDateChange: (LocalDate) -> Unit,
     visibleMonth: Month,
@@ -56,8 +69,6 @@ fun Timeline(
 
     val firstDayOfWeek = java.util.Calendar.getInstance().firstDayOfWeek
     val density = LocalDensity.current
-    val dateSize = 46f
-    val gapWidth = 12f
     val weekdaysNames = remember {
         getShortWeekdaysSymbols()
     }
@@ -89,35 +100,45 @@ fun Timeline(
         delta
     }
 
-//    val coroutine = rememberCoroutineScope()
-//
-//    val scrollJob = with(coroutine) {
-//        launch(start = CoroutineStart.LAZY) {
-//            delay(1500)
-//            scrollableState.animateScrollBy((closestFirstDayOfWeekOffset - dragOffset))
-//        }
-//    }
+    val coroutine = rememberCoroutineScope()
 
-//    if (scrollableState.isScrollInProgress) {
-//        DisposableEffect(Unit) {
-//            onDispose {
-//                if (scrollJob.isActive){
-//                    scrollJob.cancel()
-//                }
-//                scrollJob.start()
-//            }
-//        }
-//    }
+    viewModel.dateChange.observeAsActions { newDate ->
+        val secondVisibleDay = viewModel.initialDate.plus(1 - dateOffset, DateTimeUnit.DAY)
+        val secondToLastVisibleDay = secondVisibleDay.plus(daysOnScreen - 3, DateTimeUnit.DAY)
+
+        if (newDate < secondVisibleDay) {
+            val delta = newDate.until(secondVisibleDay, DateTimeUnit.DAY) - 1
+            val offset = delta * (DATE_SIZE + GAP_WIDTH)
+
+            with (coroutine) {
+                launch {
+                    with(density) {
+                        scrollableState.animateScrollBy(offset.dp.toPx())
+                    }
+                }
+            }
+        } else if (newDate > secondToLastVisibleDay) {
+            val delta = newDate.until(secondToLastVisibleDay, DateTimeUnit.DAY) - 1
+            val offset = delta * (DATE_SIZE + GAP_WIDTH)
+
+            with (coroutine) {
+                launch {
+                    with(density) {
+                        scrollableState.animateScrollBy(offset.dp.toPx())
+                    }
+                }
+            }
+        }
+    }
 
     LaunchedEffect(widthDp) {
-        daysOnScreen = (widthDp / (dateSize + gapWidth).dp).toInt() + 1
-        generalOffset = (((dateSize + gapWidth) * daysOnScreen - gapWidth - widthDp.value) / 2f).toInt()
+        daysOnScreen = (widthDp / (DATE_SIZE + GAP_WIDTH).dp).toInt() + 1
+        generalOffset = (((DATE_SIZE + GAP_WIDTH) * daysOnScreen - GAP_WIDTH - widthDp.value) / 2f).toInt()
     }
 
     LaunchedEffect(dragOffset) {
-        viewOffset = (with(density) { dragOffset.toDp() }.value % (dateSize + gapWidth)).dp
-        dateOffset = (with(density) { dragOffset.toDp() }.value / (dateSize + gapWidth)).toInt()
-
+        viewOffset = (with(density) { dragOffset.toDp() }.value % (DATE_SIZE + GAP_WIDTH)).dp
+        dateOffset = (with(density) { dragOffset.toDp() }.value / (DATE_SIZE + GAP_WIDTH)).toInt()
     }
 
     LaunchedEffect(dateOffset) {
@@ -125,10 +146,10 @@ fun Timeline(
         var newMonth = visibleMonth
         for (it in 0..daysOnScreen) {
             val id = it - dateOffset
-            val date = initialDate.plusDays(id.toLong())
+            val date = viewModel.initialDate.plus(id, unit = DateTimeUnit.DAY)
             if (date.dayOfWeek.value == firstDayOfWeek) {
                 closestFirstDayOfWeekOffset = with(density) {
-                    (initialDate.until(date, ChronoUnit.DAYS) * (dateSize + gapWidth)).dp.toPx()
+                    (viewModel.initialDate.until(date, DateTimeUnit.DAY) * (DATE_SIZE + GAP_WIDTH)).dp.toPx()
                 }
             }
             if (date.month == visibleMonth) {
@@ -156,25 +177,18 @@ fun Timeline(
             .fillMaxWidth(),
         contentAlignment = Alignment.TopEnd
     ) {
-//        Box(
-//            modifier = Modifier
-//                .background(Color.Red)
-//
-//        ) {
-//            Text(with(density){dragOffset.toDp().value.toInt().toString()})
-//        }
         Row(
-            horizontalArrangement = Arrangement.spacedBy(gapWidth.dp),
+            horizontalArrangement = Arrangement.spacedBy(GAP_WIDTH.dp),
             modifier = Modifier
                 .offset(x = viewOffset)
                 .offset(x = generalOffset.dp)
-                .offset(x = -10.dp)
+                .offset(x = (-10).dp)
                 .requiredWidth(IntrinsicSize.Min)
 
         ) {
             (-1 until daysOnScreen).forEach {
                 val id = it - dateOffset
-                val date = initialDate.plusDays(id.toLong())
+                val date = viewModel.initialDate.plus(id, unit = DateTimeUnit.DAY)
                 Column(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -182,7 +196,7 @@ fun Timeline(
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
-                            .size(dateSize.dp)
+                            .size(DATE_SIZE.dp)
                             .clip(CircleShape)
                             .clickable {
                                 onDateChange(date)
@@ -197,7 +211,7 @@ fun Timeline(
                                 MaterialTheme.colorScheme.onSurface else
                                 MaterialTheme.colorScheme.secondary
                         )
-                        if (date.isEqual(selectedDate)) {
+                        if (date == selectedDate) {
                             Box(
                                 modifier = Modifier
                                     .border(
@@ -228,9 +242,12 @@ fun Timeline(
 )
 @Composable
 fun Timeline_Preview() {
-    val initialDate = LocalDate.now()
+    val initialDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
     var selectedDate by remember {
         mutableStateOf(initialDate)
+    }
+    val viewModel = remember {
+        ScheduleScreenViewModel()
     }
     var visibleMonth by remember {
         mutableStateOf(selectedDate.month)
@@ -239,7 +256,7 @@ fun Timeline_Preview() {
         Surface {
             Timeline(
                 modifier = Modifier,
-                initialDate,
+                viewModel = viewModel,
                 selectedDate,
                 { selectedDate = it },
                 visibleMonth,
@@ -247,6 +264,20 @@ fun Timeline_Preview() {
         }
 
     }
+}
+
+fun isDayOnScreen(
+    givenDate: LocalDate,
+    initialDate: LocalDate,
+    daysOnScreen: Int,
+    dateOffset: Int
+): Boolean {
+    for (i in 0..daysOnScreen) {
+        val id = i - dateOffset
+        val date = initialDate.plus(id, unit = DateTimeUnit.DAY)
+        if (date == givenDate) return true
+    }
+    return false
 }
 
 fun getShortWeekdaysSymbols(): List<String> {

@@ -27,20 +27,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.icerock.moko.mvvm.flow.compose.observeAsActions
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
 import ru.mleykhner.shkedapp.android.ui.theme.AppTheme
-import java.time.LocalDate
-import java.time.Month
+import ru.mleykhner.shkedapp.vm.ScheduleScreenViewModel
 import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun TimelineControls() {
-    var initialDate by remember {
-        mutableStateOf(LocalDate.now())
-    }
-
+fun TimelineControls(
+    viewModel: ScheduleScreenViewModel
+) {
     var selectedDate by remember {
-        mutableStateOf(LocalDate.now())
+        mutableStateOf(viewModel.initialDate)
     }
 
     var visibleMonth by remember {
@@ -49,6 +49,10 @@ fun TimelineControls() {
 
     var visibleMonthLabel by remember {
         mutableStateOf(getMonthLabel(visibleMonth))
+    }
+
+    viewModel.dateChange.observeAsActions { newDate ->
+        selectedDate = newDate
     }
 
     LaunchedEffect(visibleMonth) {
@@ -91,13 +95,10 @@ fun TimelineControls() {
                 }
             }
             Timeline(
-                modifier = Modifier
-                    .padding(bottom = 12.dp),
-                initialDate,
-                selectedDate,
-                { selectedDate = it },
-                visibleMonth,
-                { visibleMonth = it}
+                modifier = Modifier.padding(bottom = 12.dp),
+                viewModel = viewModel,
+                selectedDate, { selectedDate = it },
+                visibleMonth, { visibleMonth = it}
             )
         }
     }
@@ -109,8 +110,11 @@ fun TimelineControls() {
 )
 @Composable
 fun TimelineControls_Preview() {
+    val vm = remember {
+        ScheduleScreenViewModel()
+    }
     AppTheme {
-        TimelineControls()
+        TimelineControls(vm)
     }
 }
 

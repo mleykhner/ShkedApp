@@ -29,7 +29,7 @@ class ScheduleServiceImpl: ScheduleService, KoinComponent {
         return dateSchedule.lessons.toList().mapNotNull { it.toViewDataObject() }
     }
 
-    override suspend fun refresh(group: String, progressHandler: (Int) -> Unit): ScheduleRefreshResult {
+    override suspend fun refresh(group: String): ScheduleRefreshResult {
         val response = try {
             client.get(HttpRoutes.GROUPS)
         } catch (e: Exception) {
@@ -38,16 +38,16 @@ class ScheduleServiceImpl: ScheduleService, KoinComponent {
         }
         if (response.status.value in 200..299) {
             Napier.v("Got response")
-            try {
+            return try {
                 val result: ScheduleDTO = response.body()
                 val realmObject = result.toRealmObject()
                 realm.write {
                     copyToRealm(realmObject, updatePolicy = UpdatePolicy.ALL)
                 }
-                return ScheduleRefreshResult.REFRESHED
+                ScheduleRefreshResult.REFRESHED
             } catch (e: NoTransformationFoundException) {
                 Napier.e("Serialization error: ", e)
-                return ScheduleRefreshResult.FAILED
+                ScheduleRefreshResult.FAILED
             }
         }
         return ScheduleRefreshResult.FAILED
