@@ -53,14 +53,19 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.todayIn
+import kotlinx.datetime.until
 import ru.mleykhner.shkedapp.android.R
 import ru.mleykhner.shkedapp.android.ui.theme.AppTheme
 import ru.mleykhner.shkedapp.android.ui.theme.weekdaysStyle
-import java.time.LocalDate
-import java.time.Period
-import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 import java.util.Locale
 
@@ -103,11 +108,11 @@ fun Calendar() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMotionApi::class)
 @Composable
 fun CalendarControls(state: SheetValue) {
     var selectedDate by rememberSaveable {
-        mutableStateOf(LocalDate.now())
+        mutableStateOf(Clock.System.todayIn(TimeZone.currentSystemDefault()))
     }
     val context = LocalContext.current
     val controlsMotionScene = remember {
@@ -209,15 +214,15 @@ fun WeekObserver(selectedDate: LocalDate, onDateChange: (LocalDate) -> Unit = {}
     )
 
     var weeks = remember {
-        (-1..1).map { getWeek(selectedDate.plusWeeks(it.toLong())) }
+        (-1..1).map { getWeek(selectedDate.plus(it, unit = DateTimeUnit.WEEK)) }
     }
 
     LaunchedEffect(weekPagerState) {
         snapshotFlow { weekPagerState.settledPage }.collect { page ->
             if (page != 1) {
                 Log.i("WeekObserver", "Pager state changed: $page")
-                onDateChange(selectedDate.plusWeeks((page - 1).toLong()))
-                weeks = (-1..1).map { getWeek(selectedDate.plusWeeks(it.toLong())) }
+                onDateChange(selectedDate.plus(page - 1, unit = DateTimeUnit.WEEK))
+                weeks = (-1..1).map { getWeek(selectedDate.plus(it, unit = DateTimeUnit.WEEK)) }
                 weekPagerState.scrollToPage(1)
             }
         }
@@ -243,7 +248,7 @@ fun WeekObserver(selectedDate: LocalDate, onDateChange: (LocalDate) -> Unit = {}
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         androidx.compose.animation.AnimatedVisibility(
-                            visible = (date.isEqual(selectedDate)),
+                            visible = (date == selectedDate),
                             enter = fadeIn(),
                             exit = fadeOut()
                         ) {
@@ -268,7 +273,7 @@ fun WeekObserver(selectedDate: LocalDate, onDateChange: (LocalDate) -> Unit = {}
 @Composable
 fun WeekObserver_Preview() {
     var selectedDate by remember {
-        mutableStateOf(LocalDate.now())
+        mutableStateOf(Clock.System.todayIn(TimeZone.currentSystemDefault()))
     }
     AppTheme {
         WeekObserver(selectedDate) {selectedDate = it}
@@ -294,7 +299,7 @@ fun MonthObserver(selectedDate: LocalDate) {
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         androidx.compose.animation.AnimatedVisibility(
-                            visible = (dates[dateIndex]!!.isEqual(selectedDate)),
+                            visible = (dates[dateIndex] == selectedDate),
                             enter = fadeIn(),
                             exit = fadeOut()
                         ) {
@@ -324,23 +329,22 @@ fun MonthObserver(selectedDate: LocalDate) {
 
 fun getWeek(date: LocalDate): List<LocalDate> {
     val weekFields = WeekFields.of(Locale.getDefault())
-    val firstDayOfWeek = weekFields.firstDayOfWeek
-    val weekStart = date.with(TemporalAdjusters.previousOrSame(firstDayOfWeek))
+    val firstDayOfWeek = weekFields.firstDayOfWeek.value
+    val dateDayOfWek = date.dayOfWeek.value
     return (0..6).map { dayIndex ->
-        weekStart.plusDays(dayIndex.toLong())
+        date.plus(firstDayOfWeek % 7 - dateDayOfWek + dayIndex, unit = DateTimeUnit.DAY)
     }
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 fun getMonth(date: LocalDate): List<LocalDate?> {
-    val isLeapYear = date.isLeapYear
     val weekFields = WeekFields.of(Locale.getDefault())
-    val firstDayOfWeek = weekFields.firstDayOfWeek
-    val weekStart = date.with(TemporalAdjusters.previousOrSame(firstDayOfWeek))
-    val firstDay = LocalDate.of(date.year, date.month, 1)
-    val prevMonthOffset = Period.between(weekStart, firstDay).days
-    val daysInMonth = date.month.length(isLeapYear)
-    return (0..< prevMonthOffset).map { null } + (0 ..< daysInMonth).map { firstDay.plusDays(it.toLong()) }
+    val firstDayOfWeek = weekFields.firstDayOfWeek.value
+    val start = LocalDate(date.year, date.month, 1)
+    val end = start.plus(1, DateTimeUnit.MONTH)
+    val daysInMonth = start.until(end, DateTimeUnit.DAY)
+    val dayOfWeek = start.dayOfWeek.value
+    val deltaDays = dayOfWeek - firstDayOfWeek % 7
+    return (0 ..< deltaDays).map { null } + (0 ..< daysInMonth).map { start.plus(it, DateTimeUnit.DAY) }
 }
 
 

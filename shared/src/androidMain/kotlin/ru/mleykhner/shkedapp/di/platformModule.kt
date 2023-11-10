@@ -7,6 +7,5 @@ import ru.mleykhner.shkedapp.data.remote.FileStorage
 
 actual val platformModule = module {
     factoryOf (::FileStorage)
-    //single { httpClient() }
     factory { (fileName: String) -> KVault(get(), fileName) }
 }

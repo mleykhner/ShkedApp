@@ -43,5 +43,19 @@
     <string name="password">Password</string>
     <string name="show_password">Show password</string>
     <string name="hide_password">Hide password</string>
+    <string name="email_or_phone">Email or phone</string>
+    <string name="email_or_phone_step_page_heading">Let\&apos;s get to know each other!</string>
+    <string name="email_or_phone_step_page_description">Sign in to watch tasks and add your own</string>
+    <string name="password_step_page_heading">The last step</string>
+    <string name="password_step_page_description">All you need is to enter the password</string>
+    <string name="wrong_password">Wrong password</string>
+    <string name="cant_sign_in">Can\&apos;t sign in?</string>
+    <string name="registration_step_page_heading">Looks like you\&apos;re new here</string>
+    <string name="registration_step_page_description">Tell us a little about yourself</string>
+    <string name="continue_registration">Continue registration</string>
+    <string name="legal_text">By tapping \\&quot;%s\\&quot; you accept [Privacy Policy](https://google.com) and [User Agreement](https://google.com)</string>
+
+    <!-- Разное -->
+    <string name="continue_button">Continue</string>
 
 </resources>

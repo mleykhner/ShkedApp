@@ -43,5 +43,19 @@
     <string name="password">Пароль</string>
     <string name="show_password">Показать пароль</string>
     <string name="hide_password">Скрыть пароль</string>
+    <string name="email_or_phone">Почта или телефон</string>
+    <string name="email_or_phone_step_page_heading">Давай знакомиться!</string>
+    <string name="email_or_phone_step_page_description">Чтобы добавлять и просматривать задания нужно авторизоваться</string>
+    <string name="password_step_page_heading">Последний шаг</string>
+    <string name="password_step_page_description">Осталось только ввести пароль</string>
+    <string name="wrong_password">Пароль не подходит</string>
+    <string name="cant_sign_in">Не получается войти?</string>
+    <string name="registration_step_page_heading">Похоже, ты впервые здесь</string>
+    <string name="registration_step_page_description">Расскажи немного о себе</string>
+    <string name="continue_registration">Продолжить регистрацию</string>
+    <string name="legal_text">Нажимая «%s», Вы принимаете [политику конфиденциальности](https://example.com/) и [пользовательское соглашение](https://example.com/)</string>
+
+    <!-- Разное -->
+    <string name="continue_button">Продолжить</string>
 
 </resources>

@@ -1,17 +1,24 @@
 package ru.mleykhner.shkedapp.vm
 
+import dev.icerock.moko.mvvm.flow.CFlow
 import dev.icerock.moko.mvvm.flow.CMutableStateFlow
 import dev.icerock.moko.mvvm.flow.CStateFlow
+import dev.icerock.moko.mvvm.flow.cFlow
 import dev.icerock.moko.mvvm.flow.cMutableStateFlow
 import dev.icerock.moko.mvvm.flow.cStateFlow
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import ru.mleykhner.shkedapp.data.remote.AuthService
+import ru.mleykhner.shkedapp.data.remote.models.auth.AuthResult
 
 @Suppress("RegExpRedundantEscape", "RegExpDuplicateCharacterInClass")
 class AuthViewModel: ViewModel(), KoinComponent {
@@ -25,6 +32,8 @@ class AuthViewModel: ViewModel(), KoinComponent {
         get() = Regex(
             """\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"""
         )
+    private val _actions = Channel<Action>()
+    val actions: CFlow<Action> get() = _actions.receiveAsFlow().cFlow()
 
     val emailOrPhone: CMutableStateFlow<String> = MutableStateFlow("").cMutableStateFlow()
     val password: CMutableStateFlow<String> = MutableStateFlow("").cMutableStateFlow()
@@ -45,7 +54,26 @@ class AuthViewModel: ViewModel(), KoinComponent {
         return "password"
     }
 
+    fun updatePassword(value: String) {
+        hasError.value = false
+        password.value = value
+    }
+
+    fun signInWithPassword() {
+        Napier.v("Sign In button pressed")
+        _isLoading.value = true
+        viewModelScope.launch {
+            val result = authService.signIn(emailOrPhone.value, password.value)
+            _isLoading.value = false
+            if (result.contains(AuthResult.SUCCESS)) {
+                _actions.send(Action.LoginSuccess)
+            } else {
+                hasError.value = true
+            }
+        }
+    }
+
     sealed interface Action {
-        object LoginSuccess : Action
+        data object LoginSuccess : Action
     }
 }
