@@ -5,9 +5,9 @@ import dev.icerock.moko.mvvm.flow.cFlow
 import dev.icerock.moko.mvvm.flow.cMutableStateFlow
 import dev.icerock.moko.mvvm.flow.cStateFlow
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
@@ -22,21 +22,30 @@ class ScheduleScreenViewModel: ViewModel(), KoinComponent {
 
     private val scheduleService: ScheduleService by inject()
 
-    val initialDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    val initialDate: LocalDate get() = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+    private var _selectedDate: LocalDate = initialDate
+    var selectedDate: LocalDate
+        get() = _selectedDate
+        set(value) {
+            _selectedDate = value
+            viewModelScope.launch {
+                _actions.emit(Action.DateChanged)
+            }
+        }
+
+//    var _visibleMonth: MutableStateFlow<String> =
 
     private val _isLoading = MutableStateFlow(false).cMutableStateFlow()
     val isLoading = _isLoading.cStateFlow()
 
-    private val _dateChange = Channel<LocalDate>()
-    val dateChange: CFlow<LocalDate> get() = _dateChange.receiveAsFlow().cFlow()
-
-    private val _actions = Channel<Action>()
-    val actions: CFlow<Action> get() = _actions.receiveAsFlow().cFlow()
+    private val _actions = MutableSharedFlow<Action>()
+    val actions: CFlow<Action> get() = _actions.asSharedFlow().cFlow()
 
     fun updateSchedule(group: String) {
         _isLoading.value = true
         viewModelScope.launch {
-            _actions.send(
+            _actions.emit(
                 when (scheduleService.refresh(group)) {
                     ScheduleRefreshResult.REFRESHED -> Action.Refreshed
                     ScheduleRefreshResult.HAS_CHANGES -> Action.HasChanges
@@ -49,12 +58,11 @@ class ScheduleScreenViewModel: ViewModel(), KoinComponent {
     }
 
     fun backToToday() {
-        viewModelScope.launch {
-            _dateChange.send(Clock.System.todayIn(TimeZone.currentSystemDefault()))
-        }
+        selectedDate = initialDate
     }
 
     sealed interface Action {
+        data object DateChanged: Action
         data object NoConnection: Action
         data object Failed: Action
         data object Refreshed: Action

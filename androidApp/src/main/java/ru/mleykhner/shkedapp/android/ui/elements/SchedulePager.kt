@@ -7,14 +7,18 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.snapTo
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope.*
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,18 +31,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import dev.icerock.moko.mvvm.flow.compose.observeAsActions
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.plus
+import ru.mleykhner.shkedapp.vm.ScheduleScreenViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
-@Preview(widthDp = 360, showBackground = true)
 @Composable
-fun SchedulePager() {
+fun SchedulePager(
+    modifier: Modifier = Modifier,
+    viewModel: ScheduleScreenViewModel
+) {
 
     val density = LocalDensity.current
     var widthDp by remember {
         mutableStateOf(0.dp)
+    }
+
+    var selectedDate by remember {
+        mutableStateOf(viewModel.selectedDate)
     }
 
     val anchors = with (density) {
@@ -60,17 +73,28 @@ fun SchedulePager() {
         mutableIntStateOf(0)
     }
 
+    viewModel.actions.observeAsActions { action ->
+        if (action != ScheduleScreenViewModel.Action.DateChanged) return@observeAsActions
+        selectedDate = viewModel.selectedDate
+    }
+
     SideEffect {
         state.updateAnchors(anchors)
     }
 
     LaunchedEffect(state.currentValue) {
-        if (state.currentValue > 0) index -= 1
-        else if (state.currentValue < 0) index += 1
+        if (state.currentValue > 0) {
+            index -= 1
+            viewModel.selectedDate = selectedDate.plus(-1, DateTimeUnit.DAY)
+        }
+        else if (state.currentValue < 0) {
+            index += 1
+            viewModel.selectedDate = selectedDate.plus(1, DateTimeUnit.DAY)
+        }
         state.snapTo(0f)
     }
 
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .anchoredDraggable(
                 state = state,
@@ -84,25 +108,29 @@ fun SchedulePager() {
             .fillMaxSize()
     ) {
         Row(
-            modifier = Modifier
-                .offset {
+            modifier = Modifier.run {
+                offset {
                     IntOffset(
                         x = state
                             .requireOffset()
-                            .toInt(), y = 0
+                            .toInt(),
+                        y = 0
                     )
                 }
-                .requiredWidth(IntrinsicSize.Min)
+                    .requiredWidth(IntrinsicSize.Min)
+                    .height(maxHeight)
+            }
         ) {
             Column(
                 modifier = Modifier.width(widthDp)
             ) {
                 Text(text = "${index - 1}")
             }
-            Column(
-                modifier = Modifier.width(widthDp)
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(1),
+                modifier = modifier.width(widthDp)
             ) {
-                Text(text = "$index")
+                item { Text(text = "$index") }
             }
             Column(
                 modifier = Modifier.width(widthDp)

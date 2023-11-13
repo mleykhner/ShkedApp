@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,10 +40,11 @@ import java.util.Locale
 
 @Composable
 fun TimelineControls(
+    modifier: Modifier = Modifier,
     viewModel: ScheduleScreenViewModel
 ) {
     var selectedDate by remember {
-        mutableStateOf(viewModel.initialDate)
+        mutableStateOf(viewModel.selectedDate)
     }
 
     var visibleMonth by remember {
@@ -51,8 +55,21 @@ fun TimelineControls(
         mutableStateOf(getMonthLabel(visibleMonth))
     }
 
-    viewModel.dateChange.observeAsActions { newDate ->
-        selectedDate = newDate
+    var isMenuExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    viewModel.actions.observeAsActions { action ->
+        when (action) {
+            ScheduleScreenViewModel.Action.DateChanged -> {
+                selectedDate = viewModel.selectedDate
+                visibleMonth = selectedDate.month
+            }
+            ScheduleScreenViewModel.Action.Failed -> TODO()
+            ScheduleScreenViewModel.Action.HasChanges -> TODO()
+            ScheduleScreenViewModel.Action.NoConnection -> TODO()
+            ScheduleScreenViewModel.Action.Refreshed -> TODO()
+        }
     }
 
     LaunchedEffect(visibleMonth) {
@@ -60,6 +77,7 @@ fun TimelineControls(
     }
 
     Surface(
+        modifier = modifier,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         tonalElevation = 1.dp,
         shadowElevation = 1.dp
@@ -90,14 +108,29 @@ fun TimelineControls(
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(Icons.Rounded.MoreVert, "more")
+                Box {
+                    IconButton(onClick = { isMenuExpanded = !isMenuExpanded }) {
+                        Icon(Icons.Rounded.MoreVert, "more")
+                    }
+                    DropdownMenu(
+                        isMenuExpanded,
+                        onDismissRequest = { isMenuExpanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = {
+                                   Text(text = "Back to today")
+                            },
+                            onClick = {
+                                viewModel.backToToday()
+                                isMenuExpanded = false
+                            }
+                        )
+                    }
                 }
             }
             Timeline(
                 modifier = Modifier.padding(bottom = 12.dp),
                 viewModel = viewModel,
-                selectedDate, { selectedDate = it },
                 visibleMonth, { visibleMonth = it}
             )
         }
@@ -114,7 +147,7 @@ fun TimelineControls_Preview() {
         ScheduleScreenViewModel()
     }
     AppTheme {
-        TimelineControls(vm)
+        TimelineControls(viewModel = vm)
     }
 }
 

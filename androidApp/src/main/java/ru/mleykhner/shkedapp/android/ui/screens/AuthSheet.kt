@@ -100,7 +100,8 @@ fun AuthSheet(
             Crossfade(
                 targetState = (
                         navBackStackEntry?.destination?.hasRoute(
-                            AuthStep.EMAIL_OR_PHONE.name, null) == false
+                            AuthStep.EMAIL_OR_PHONE.name, null
+                        ) == false
                         ),
                 label = "BackButton"
             ) { hidden ->

@@ -42,7 +42,6 @@ import dev.icerock.moko.mvvm.flow.compose.observeAsActions
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
@@ -61,8 +60,6 @@ private const val GAP_WIDTH = 12f
 fun Timeline(
     modifier: Modifier = Modifier,
     viewModel: ScheduleScreenViewModel,
-    selectedDate: LocalDate,
-    onDateChange: (LocalDate) -> Unit,
     visibleMonth: Month,
     onVisibleMonthChange: (Month) -> Unit
 ) {
@@ -94,6 +91,9 @@ fun Timeline(
     var closestFirstDayOfWeekOffset by remember {
         mutableFloatStateOf(0f)
     }
+    var selectedDate by remember {
+        mutableStateOf(viewModel.selectedDate)
+    }
 
     val scrollableState = rememberScrollableState { delta ->
         dragOffset += delta
@@ -102,12 +102,15 @@ fun Timeline(
 
     val coroutine = rememberCoroutineScope()
 
-    viewModel.dateChange.observeAsActions { newDate ->
+    viewModel.actions.observeAsActions { action ->
+        if (action != ScheduleScreenViewModel.Action.DateChanged) return@observeAsActions
+        selectedDate = viewModel.selectedDate
+
         val secondVisibleDay = viewModel.initialDate.plus(1 - dateOffset, DateTimeUnit.DAY)
         val secondToLastVisibleDay = secondVisibleDay.plus(daysOnScreen - 3, DateTimeUnit.DAY)
 
-        if (newDate < secondVisibleDay) {
-            val delta = newDate.until(secondVisibleDay, DateTimeUnit.DAY) - 1
+        if (selectedDate < secondVisibleDay) {
+            val delta = selectedDate.until(secondVisibleDay, DateTimeUnit.DAY) - 1
             val offset = delta * (DATE_SIZE + GAP_WIDTH)
 
             with (coroutine) {
@@ -117,8 +120,8 @@ fun Timeline(
                     }
                 }
             }
-        } else if (newDate > secondToLastVisibleDay) {
-            val delta = newDate.until(secondToLastVisibleDay, DateTimeUnit.DAY) - 1
+        } else if (selectedDate > secondToLastVisibleDay) {
+            val delta = selectedDate.until(secondToLastVisibleDay, DateTimeUnit.DAY) - 1
             val offset = delta * (DATE_SIZE + GAP_WIDTH)
 
             with (coroutine) {
@@ -199,7 +202,8 @@ fun Timeline(
                             .size(DATE_SIZE.dp)
                             .clip(CircleShape)
                             .clickable {
-                                onDateChange(date)
+                                viewModel.selectedDate = date
+//                                onDateChange(date)
                                 onVisibleMonthChange(date.month)
                             }
 
@@ -257,8 +261,6 @@ fun Timeline_Preview() {
             Timeline(
                 modifier = Modifier,
                 viewModel = viewModel,
-                selectedDate,
-                { selectedDate = it },
                 visibleMonth,
                 { visibleMonth = it })
         }
@@ -266,19 +268,19 @@ fun Timeline_Preview() {
     }
 }
 
-fun isDayOnScreen(
-    givenDate: LocalDate,
-    initialDate: LocalDate,
-    daysOnScreen: Int,
-    dateOffset: Int
-): Boolean {
-    for (i in 0..daysOnScreen) {
-        val id = i - dateOffset
-        val date = initialDate.plus(id, unit = DateTimeUnit.DAY)
-        if (date == givenDate) return true
-    }
-    return false
-}
+//fun isDayOnScreen(
+//    givenDate: LocalDate,
+//    initialDate: LocalDate,
+//    daysOnScreen: Int,
+//    dateOffset: Int
+//): Boolean {
+//    for (i in 0..daysOnScreen) {
+//        val id = i - dateOffset
+//        val date = initialDate.plus(id, unit = DateTimeUnit.DAY)
+//        if (date == givenDate) return true
+//    }
+//    return false
+//}
 
 fun getShortWeekdaysSymbols(): List<String> {
     val formatter = DateFormatSymbols.getInstance()
