@@ -22,7 +22,7 @@ fun ScheduleScreen(
 ) {
 
     val isLoading by viewModel.isLoading.collectAsState()
-    val refreshState = rememberPullRefreshState(refreshing = isLoading, onRefresh = { /*TODO*/ })
+    val refreshState = rememberPullRefreshState(refreshing = isLoading, onRefresh = { viewModel.updateSchedule("М3О-325Бк-21") })
 
     Box(
         contentAlignment = Alignment.BottomCenter,

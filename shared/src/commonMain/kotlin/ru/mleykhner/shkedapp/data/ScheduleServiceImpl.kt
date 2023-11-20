@@ -5,9 +5,12 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.http.appendPathSegments
 import io.realm.kotlin.Realm
 import io.realm.kotlin.UpdatePolicy
 import io.realm.kotlin.ext.query
+import io.realm.kotlin.notifications.SingleQueryChange
+import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -29,9 +32,16 @@ class ScheduleServiceImpl: ScheduleService, KoinComponent {
         return dateSchedule.lessons.toList().mapNotNull { it.toViewDataObject() }
     }
 
+    override fun getScheduleAsFlow(group: String): Flow<SingleQueryChange<ScheduleRealm>>
+        = realm.query<ScheduleRealm>("groupName == $0", group).first().asFlow()
+
     override suspend fun refresh(group: String): ScheduleRefreshResult {
         val response = try {
-            client.get(HttpRoutes.GROUPS)
+            client.get(HttpRoutes.GROUPS) {
+                url {
+                    appendPathSegments(group)
+                }
+            }
         } catch (e: Exception) {
             Napier.e("Refresh failed: ", e)
             return ScheduleRefreshResult.FAILED

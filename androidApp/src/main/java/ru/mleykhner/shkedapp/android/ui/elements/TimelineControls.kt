@@ -1,5 +1,6 @@
 package ru.mleykhner.shkedapp.android.ui.elements
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -65,10 +66,10 @@ fun TimelineControls(
                 selectedDate = viewModel.selectedDate
                 visibleMonth = selectedDate.month
             }
-            ScheduleScreenViewModel.Action.Failed -> TODO()
-            ScheduleScreenViewModel.Action.HasChanges -> TODO()
-            ScheduleScreenViewModel.Action.NoConnection -> TODO()
-            ScheduleScreenViewModel.Action.Refreshed -> TODO()
+            ScheduleScreenViewModel.Action.Failed -> Log.e("TimelineControls", "Failed")
+            ScheduleScreenViewModel.Action.HasChanges -> Log.v("TimelineControls", "Has Changes")
+            ScheduleScreenViewModel.Action.NoConnection -> Log.e("TimelineControls", "No Connection")
+            ScheduleScreenViewModel.Action.Refreshed -> Log.i("TimelineControls", "Refreshed")
         }
     }
 
@@ -79,8 +80,8 @@ fun TimelineControls(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-        tonalElevation = 1.dp,
-        shadowElevation = 1.dp
+        tonalElevation = 3.dp,
+        shadowElevation = 3.dp
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -131,8 +132,8 @@ fun TimelineControls(
             Timeline(
                 modifier = Modifier.padding(bottom = 12.dp),
                 viewModel = viewModel,
-                visibleMonth, { visibleMonth = it}
-            )
+                visibleMonth
+            ) { visibleMonth = it }
         }
     }
 }

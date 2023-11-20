@@ -7,27 +7,31 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.snapTo
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope.*
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -37,6 +41,7 @@ import dev.icerock.moko.mvvm.flow.compose.observeAsActions
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.plus
 import ru.mleykhner.shkedapp.vm.ScheduleScreenViewModel
+import kotlin.math.sign
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -54,6 +59,8 @@ fun SchedulePager(
         mutableStateOf(viewModel.selectedDate)
     }
 
+    val schedule by viewModel.schedule.collectAsState()
+
     val anchors = with (density) {
         DraggableAnchors {
             -1f at -(widthDp.toPx())
@@ -64,17 +71,14 @@ fun SchedulePager(
 
     val state = remember { AnchoredDraggableState(
         initialValue = 0f,
-        positionalThreshold = { totalDistance: Float ->  totalDistance * 0.5f },
+        positionalThreshold = { totalDistance: Float -> totalDistance * 0.5f },
         velocityThreshold = { with(density) { 125.dp.toPx() } },
         animationSpec = tween()
     ) }
 
-    var index by remember {
-        mutableIntStateOf(0)
-    }
-
     viewModel.actions.observeAsActions { action ->
         if (action != ScheduleScreenViewModel.Action.DateChanged) return@observeAsActions
+
         selectedDate = viewModel.selectedDate
     }
 
@@ -83,15 +87,12 @@ fun SchedulePager(
     }
 
     LaunchedEffect(state.currentValue) {
-        if (state.currentValue > 0) {
-            index -= 1
-            viewModel.selectedDate = selectedDate.plus(-1, DateTimeUnit.DAY)
+        snapshotFlow { state.currentValue }.collect { value ->
+            if (value != 0f) {
+                viewModel.selectedDate = selectedDate.plus(value.sign.toInt() * -1, DateTimeUnit.DAY)
+            }
+            state.snapTo(0f)
         }
-        else if (state.currentValue < 0) {
-            index += 1
-            viewModel.selectedDate = selectedDate.plus(1, DateTimeUnit.DAY)
-        }
-        state.snapTo(0f)
     }
 
     BoxWithConstraints(
@@ -108,8 +109,8 @@ fun SchedulePager(
             .fillMaxSize()
     ) {
         Row(
-            modifier = Modifier.run {
-                offset {
+            modifier = Modifier
+                .offset {
                     IntOffset(
                         x = state
                             .requireOffset()
@@ -117,25 +118,37 @@ fun SchedulePager(
                         y = 0
                     )
                 }
-                    .requiredWidth(IntrinsicSize.Min)
-                    .height(maxHeight)
-            }
+                .requiredWidth(IntrinsicSize.Min)
+                .height(maxHeight)
         ) {
-            Column(
-                modifier = Modifier.width(widthDp)
-            ) {
-                Text(text = "${index - 1}")
-            }
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(1),
-                modifier = modifier.width(widthDp)
-            ) {
-                item { Text(text = "$index") }
-            }
-            Column(
-                modifier = Modifier.width(widthDp)
-            ) {
-                Text(text = "${index + 1}")
+            for (delta in -1..1)
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(1),
+                    modifier = modifier.width(widthDp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    schedule[selectedDate.plus(delta, DateTimeUnit.DAY)]?.let { day ->
+                        if (day.isNotEmpty())
+                            items(day.size) { index ->
+                                LessonCard(
+                                    day[index],
+                                    modifier = Modifier.padding(horizontal = 12.dp)
+                                )
+                            }
+                        else {
+                            item {
+                                Text(
+                                    text = "Выходной",
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                )
+                            }
+                        }
+                    } ?: run {
+                        item { CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.CenterVertically)
+                        ) }
+                    }
             }
         }
     }
