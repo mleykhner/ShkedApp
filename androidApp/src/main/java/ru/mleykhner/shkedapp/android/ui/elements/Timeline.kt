@@ -246,7 +246,7 @@ fun Timeline(
 @Composable
 fun Timeline_Preview() {
     val initialDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    val selectedDate by remember {
+    val  selectedDate by remember {
         mutableStateOf(initialDate)
     }
     val viewModel = remember {

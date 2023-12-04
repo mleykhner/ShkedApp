@@ -32,12 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.mvvm.flow.compose.observeAsActions
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.Month
 import ru.mleykhner.shkedapp.android.ui.theme.AppTheme
+import ru.mleykhner.shkedapp.utils.getMonthLabel
 import ru.mleykhner.shkedapp.vm.ScheduleScreenViewModel
-import java.time.format.TextStyle
-import java.util.Locale
 
 @Composable
 fun TimelineControls(
@@ -150,26 +147,4 @@ fun TimelineControls_Preview() {
     AppTheme {
         TimelineControls(viewModel = vm)
     }
-}
-
-fun getMonthLabel(date: LocalDate): String {
-    return date.month.getDisplayName(
-        TextStyle.FULL_STANDALONE,
-        Locale.getDefault()
-    )
-        .replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(Locale.getDefault())
-            else it.toString()
-        }
-}
-
-fun getMonthLabel(month: Month): String {
-    return month.getDisplayName(
-        TextStyle.FULL_STANDALONE,
-        Locale.getDefault()
-    )
-        .replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(Locale.getDefault())
-            else it.toString()
-        }
 }

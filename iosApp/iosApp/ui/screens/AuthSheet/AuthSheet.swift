@@ -30,7 +30,8 @@ struct AuthSheetContent: View {
     @State private var page: AuthPage = .emailOrPhone
     @Namespace var namespace
     var body: some View {
-        page.view(emailORPhone: viewModel.binding(\.emailOrPhone), page: $page, namespace: namespace)
+        EmailOrPhoneStep(email: viewModel.binding(\.emailOrPhone), namespace: namespace)
+//        page.view(emailORPhone: viewModel.binding(\.emailOrPhone), page: $page, namespace: namespace)
     }
 }
 

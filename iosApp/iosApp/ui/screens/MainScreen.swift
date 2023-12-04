@@ -42,7 +42,7 @@ struct MainScreen: View {
             .padding([.top], 8)
             .ignoresSafeArea()
             .background(Material.bar)
-            
+            TimelineControls()
         }
     }
 }

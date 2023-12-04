@@ -9,15 +9,31 @@
 import Foundation
 import SwiftUI
 
-class HorizontalInfiniteScrollAnimator: ObservableObject {
+class TimelineAnimator: ObservableObject {
     
-    @Published private var animationTimer: Timer? = nil
-    @Published private(set) var dragOffset: CGFloat = 0.0
-    @Published private(set) var offset: CGFloat = 0.0
-    private var itemWidth: CGFloat? = nil
+    private(set) var dragOffset: CGFloat = 0.0 {
+        didSet {
+            fullOffset = dragOffset + offset
+        }
+    }
+    private(set) var offset: CGFloat = 0.0 {
+        didSet {
+            fullOffset = dragOffset + offset
+        }
+    }
+    @Published private(set) var fullOffset: CGFloat = 0.0 {
+        didSet {
+            if itemWidth != nil && itemWidth != CGFloat.zero {
+                dateOffset = Int((fullOffset / itemWidth!).rounded())
+            }
+        }
+    }
+    @Published private(set) var dateOffset: Int = 0
+    @Published private(set) var itemWidth: CGFloat? = nil
+    private var displayLink: CADisplayLink? = nil
     
     var isAnimationFinished: Bool {
-        !(animationTimer?.isValid ?? false)
+        displayLink == nil
     }
     
     private var startPosition: CGFloat = 0
@@ -26,13 +42,13 @@ class HorizontalInfiniteScrollAnimator: ObservableObject {
     private var startTime: TimeInterval = 0
     
     func animate(from start: CGFloat, to end: CGFloat, duration: Double = 1.0) {
+        stop()
         startPosition = start
         endPosition = end
         scrollDuration = duration
         startTime = CACurrentMediaTime()
-        animationTimer = Timer.scheduledTimer(withTimeInterval: 1/60, repeats: true) { _ in
-            self.offset = self.nextStep()
-        }
+        displayLink = CADisplayLink(target: self, selector: #selector(step))
+        displayLink?.add(to: .current, forMode: .default)
     }
     
     func setItemWidth(_ width: CGFloat) {
@@ -52,25 +68,19 @@ class HorizontalInfiniteScrollAnimator: ObservableObject {
     }
     
     func stop() {
-        animationTimer?.invalidate()
-        animationTimer = nil
-        startPosition = 0
-        endPosition = 0
-        scrollDuration = 0
-        startTime = 0
+        displayLink?.invalidate()
+        displayLink = nil
     }
     
     func onDrag(_ value: DragGesture.Value) {
-        if !isAnimationFinished {
-            stop()
-        }
+        if !isAnimationFinished { stop() }
         dragOffset = value.translation.width
     }
     
     func onDragEnded(_ value: DragGesture.Value, minDelta: CGFloat = 50, duration: Double = 1.0) {
-        let predictedWidth = value.predictedEndTranslation.width
         offset += dragOffset
         dragOffset = 0
+        let predictedWidth = value.predictedEndTranslation.width
         if abs(value.translation.width - value.predictedEndTranslation.width) >= minDelta {
             animate(from: offset, to: (offset + predictedWidth), duration: duration)
         }
@@ -82,7 +92,7 @@ class HorizontalInfiniteScrollAnimator: ObservableObject {
         let time = TimeInterval(min(1.0, (currentTime - startTime) / scrollDuration))
         
         if time >= 1.0 {
-            animationTimer?.invalidate()
+            stop()
             return endPosition
         }
         
@@ -94,5 +104,9 @@ class HorizontalInfiniteScrollAnimator: ObservableObject {
     
     private func easeOut(time: TimeInterval) -> TimeInterval {
         return 1 - pow((1 - time), 4)
+    }
+    
+    @objc private func step() {
+        self.offset = self.nextStep()
     }
 }

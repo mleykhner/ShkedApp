@@ -5,17 +5,13 @@ import dev.icerock.moko.mvvm.flow.cFlow
 import dev.icerock.moko.mvvm.flow.cMutableStateFlow
 import dev.icerock.moko.mvvm.flow.cStateFlow
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -68,16 +64,17 @@ class ScheduleScreenViewModel: ViewModel(), KoinComponent {
     }
 
     private fun loadScheduleForDate(date: LocalDate) {
-        viewModelScope.launch(Dispatchers.IO) {
-            for (delta in -1..1) {
-                val deltaDate = date.plus(delta, DateTimeUnit.DAY)
-                if (!_schedule.value.containsKey(deltaDate)) {
-                    scheduleService.getScheduleByDate("М3О-325Бк-21", deltaDate)?.let {
-                        _schedule.value[deltaDate] = it
-                    }
-                }
-            }
-        }
+        // TODO: Починить BAD ACCESS
+//        viewModelScope.launch(Dispatchers.IO) {
+//            for (delta in -1..1) {
+//                val deltaDate = date.plus(delta, DateTimeUnit.DAY)
+//                if (!_schedule.value.containsKey(deltaDate)) {
+//                    scheduleService.getScheduleByDate("М3О-325Бк-21", deltaDate)?.let {
+//                        _schedule.value[deltaDate] = it
+//                    }
+//                }
+//            }
+//        }
     }
 
     fun backToToday() {
@@ -91,4 +88,6 @@ class ScheduleScreenViewModel: ViewModel(), KoinComponent {
         data object Refreshed: Action
         data object HasChanges: Action
     }
+
 }
+

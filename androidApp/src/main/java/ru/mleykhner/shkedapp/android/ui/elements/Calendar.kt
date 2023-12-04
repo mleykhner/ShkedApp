@@ -51,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
@@ -66,6 +67,7 @@ import kotlinx.datetime.until
 import ru.mleykhner.shkedapp.android.R
 import ru.mleykhner.shkedapp.android.ui.theme.AppTheme
 import ru.mleykhner.shkedapp.android.ui.theme.weekdaysStyle
+import ru.mleykhner.shkedapp.utils.getMonthLabel
 import java.time.temporal.WeekFields
 import java.util.Locale
 
@@ -75,8 +77,9 @@ fun Calendar() {
     val bottomSheetState = rememberBottomSheetScaffoldState(
         bottomSheetState = SheetState(
             skipPartiallyExpanded = false,
-            skipHiddenState = true,
-            initialValue = SheetValue.PartiallyExpanded
+            density = LocalDensity.current,
+            initialValue = SheetValue.PartiallyExpanded,
+            skipHiddenState = true
         )
     )
 
@@ -124,12 +127,12 @@ fun CalendarControls(state: SheetValue) {
     val weekdaysNames = remember {
         getShortWeekdaysSymbols()
     }
-    var monthLabel by remember { mutableStateOf(getMonthLabel(selectedDate)) }
+    var monthLabel by remember { mutableStateOf(getMonthLabel(selectedDate.month)) }
     val progress by animateFloatAsState(if (state == SheetValue.Expanded) 1f else 0f, label = "")
 
 
     LaunchedEffect(selectedDate) {
-        monthLabel = getMonthLabel(selectedDate)
+        monthLabel = getMonthLabel(selectedDate.month)
     }
 
     Column(
